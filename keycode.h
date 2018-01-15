@@ -33,7 +33,7 @@
 #define KC_GS 0x1D
 #define KC_RS 0x1E
 #define KC_US 0x1F
-#define KC_SP 0x20
+#define KC_SPC 0x20
 #define KC_EXLM 0x21
 #define KC_DQUO 0x22
 #define KC_HASH 0x23
@@ -62,7 +62,7 @@
 #define KC_CLN 0x3A
 #define KC_SCLN 0x3B
 #define KC_LT 0x3C
-#define KC_EQAL 0x3D
+#define KC_EQL 0x3D
 #define KC_GT 0x3E
 #define KC_QUES 0x3F
 #define KC_AT 0x40
@@ -129,5 +129,27 @@
 #define KC_RCB 0x7D
 #define KC_TILD 0x7E
 #define KC_DEL 0x7F
+#define KC_ENT 0xB0
+#define KC_ESC 0xB1
+#define KC_BSPC 0xB2
+#define KC_DEL 0xD4
+#define KC_TAB 0xB3
+#define KC_CAPS 0xC1
+#define KC_LCTL 0x80
+#define KC_LSFT 0x81
+#define KC_LALT 0x82
+#define KC_LGUI 0x83
+#define KC_RCTL 0x84
+#define KC_RSFT 0x85
+#define KC_RALT 0x86
+#define KC_RGUI 0x87
+#define KC_PGUP 0xD3
+#define KC_PGDN 0xD6
+#define KC_HOME 0xD2
+#define KC_END 0xD5
+#define KC_LEFT 0xD8
+#define KC_RGHT 0xD7
+#define KC_UP 0xDA
+#define KC_DOWN 0xD9
 
 #endif

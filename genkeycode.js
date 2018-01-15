@@ -2,19 +2,18 @@ let fs = require('fs');
 
 let src = fs.readFileSync('./keycode.txt').toString();
 
-// console.log(src);
-
 let str = '';
 
 str += '#ifndef __INCLUDED_KEYCODE_H__\r\n';
 str += '#define __INCLUDED_KEYCODE_H__\r\n';
 str += '\r\n';
 
-src.split(/\n/).forEach(function(line) {
+src.split(/\r\n/).forEach(function(line) {
+	if (line == null ||  line == '') return;
 	let values = line.split(/\t/);
 	// console.log(values);
-	let code = values[1];
-	let name = values[2];
+	let code = values[0];
+	let name = values[1];
 	str += `#define ${name} ${code}\r\n`;
 });
 

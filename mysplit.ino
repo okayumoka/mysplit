@@ -1,74 +1,55 @@
 // MySplit
 // ホスト（左手側）用
-
 #include "Keyboard.h"
-
-const int rowNum = 5;
-const int colNum = 6;
-const int colNum2 = 12;
-
 #include "keymap.h"
 
-const int[rowNum] rowPins = { 3, 4, 5, 6, 7 };
-const int[colNum] colPins = { 8, 9, 10, 11, 12 };
+const int rowPins[ROW_NUM] = { 2, 3, 4, 5, 6 }; // OUTPUTのピン。走査ピン
+const int colPins[COL_NUM] = { 7, 8, 9, 10, 11, 12 }; // INPUT_PULLUPのピン。
 
-bool currentState[rowNum][colNum2];
-bool prevState[rowNum][colNum2];
+bool currentState[ROW_NUM][COL_NUM_2];
+bool beforeState[ROW_NUM][COL_NUM_2];
 
-// 初期化
+int i;
+int j;
+
 void setup() {
-	int i;
-	int j;
-
-	// デバッグ用のメッセージに使用
-	Serial.begin(9600);
-
-	// 左右の通信に使用
-	Serial1.begin(9600);
-
-	// ピンの初期化
-	for (i = 0; i < rowNum; i++) {
-		int rowPin = rowPins[i];
-		pinMode(rowPin, OUTPUT);
-		digitalWrite(rowPin, HIGH);
+	for (i = 0; i < ROW_NUM; i++) {
+		int pin = rowPins[i];
+		pinMode(pin, OUTPUT);
+		digitalWrite(pin, HIGH);
 	}
-	for (i = 0; i < colNum; i++) {
-		int colPin = colPins[i];
-		pinMode(colPin, INPUT_PULLUP);
-		digitalWrite(colPin, HIGH);
+	for (i = 0; i < COL_NUM; i++) {
+		int pin = colPins[i];
+		pinMode(pin, INPUT_PULLUP);
 	}
 
-	// 状態の初期化
-	for (i = 0; i < rowNum; i++) {
-		for (j = 0; j < colNum2; j++) {
+	for (i = 0; i < ROW_NUM; i++) {
+		for (j = 0; j < COL_NUM_2; j++) {
 			currentState[i][j] = HIGH;
-			prevState[i][j] = HIGH;
+			beforeState[i][j] = HIGH;
 		}
 	}
 
-	// キーボード処理開始
+	Serial.begin(9600);
+	Serial1.begin(9600);
 	Keyboard.begin();
 }
 
 void loop() {
-	// ホストの押下状態を取得
 	getHostState();
-	// サブの押下状態を取得
 	getSubState();
-	// キー押下処理
 	applyKeyState();
 }
 
 void getHostState() {
-	int i;
-	int j;
-	for (i = 0; i < rowNum; i++) {
+	for (i = 0; i < ROW_NUM; i++) {
 		int rowPin = rowPins[i];
 		digitalWrite(rowPin, LOW);
-		for (j = 0; i < colNum; j++) {
-			int colPin = colPins[i];
+		for (j = 0; j < COL_NUM; j++)  {
+			int colPin = colPins[j];
 			currentState[i][j] = digitalRead(colPin);
 		}
+		digitalWrite(rowPin, HIGH);
 	}
 }
 
@@ -80,10 +61,10 @@ void getSubState() {
 
 	// 通信方式について
 	// 0bABCDEFGH
-	// FGH ... colPinの番号
-	// CDE ... rowPinの番号
-	// B   ... Press時は0、Release時は1
 	// A   ... 未使用
+	// B   ... Press時は0、Release時は1
+	// CDE ... rowPinの番号（右手用の範囲内で。したがって0～5）
+	// FGH ... colPinの番号（右手用の範囲内で。したがって0～6）
 
 	bool isPress = (bool) ((readData & 0x10000000 >> 7) == 0);
 	bool isLeft  = (bool) ((readData & 0x01000000 >> 6) == 0);
@@ -91,23 +72,29 @@ void getSubState() {
 	int colPin   = (int)  (readData & 0x00000111);
 
 	// 右手用
-	currentState[rowPin][colPin + colNum] = isPress ? LOW : HIGH;
+	currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
 }
 
 void applyKeyState() {
-	int i;
-	int j;
-	for (i = 0; i < rowNum; i++) {
-		for (j = 0; j < colNum2; j++) {
-			if (currentState[i][j] != prevState[i][j]) {
+	for (i = 0; i < ROW_NUM; i++) {
+		for (j = 0; j < COL_NUM_2; j++)  {
+			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
+					Serial.print("PRESS   ");
 					Keyboard.press(keyMap[i][j]);
 				} else {
+					Serial.print("RELEASE ");
 					Keyboard.release(keyMap[i][j]);
 				}
+				Serial.print(i);
+				Serial.print(", ");
+				Serial.println(j);
 			}
-			prevState[i][j] = currentState[i][j];
+			beforeState[i][j] = currentState[i][j];
 		}
 	}
 }
+
+
+
 

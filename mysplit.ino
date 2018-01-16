@@ -1,9 +1,9 @@
 // MySplit
-// ホスト（左手側）用
+
+#define HOST_SIDE
+
 #include "Keyboard.h"
 #include "keymap.h"
-
-#define IS_HOST_SIDE true
 
 const int rowPins[ROW_NUM] = { 2, 3, 4, 5, 6 }; // OUTPUTのピン。走査ピン
 const int colPins[COL_NUM] = { 7, 8, 9, 10, 11, 12 }; // INPUT_PULLUPのピン。
@@ -39,7 +39,7 @@ void setup() {
 
 void loop() {
 	getThisSideState();
-#ifdef IS_HOST_SIDE
+#ifdef HOST_SIDE
 	getOtherSideState();
 	applyKeyState();
 #else
@@ -60,7 +60,17 @@ void getThisSideState() {
 }
 
 void getOtherSideState() {
-	if (!Serial1.available()) return;
+	if (!Serial1.available()) {
+		// サブ側と通信できていない場合は、サブ側をすべて未押下にしておく。
+		// そうでないと、何かの拍子に通信できなくなったとき、
+		// キーが押しっぱなしになる可能性がある。
+		for (i = 0; i < rowNum; i++) {
+			for (j = 0; j < colNum; j++) {
+				currentState[i][j + COL_NUM] = HIGH;
+			}
+		}
+		return;
+	}
 
 	byte readData = Serial1.read();
 	if (readData == -1) return;
@@ -72,12 +82,17 @@ void getOtherSideState() {
 	// CDE ... rowPinの番号（右手用の範囲内で。したがって0～5）
 	// FGH ... colPinの番号（右手用の範囲内で。したがって0～6）
 
-	bool eof     = (bool) ( readData & 0b10000000) == 0b10000000);
-	bool isPress = (bool) ((readData & 0b01000000) == 0b01000000);
+	bool eof     = (bool) ((readData & 0b10000000) == 0b10000000);
+	bool isPress = (bool) ((readData & 0b01000000) == 0b00000000);
 	int rowPin   = (int)  ( readData & 0b00111000 >> 3);
 	int colPin   = (int)  ( readData & 0b00000111 );
 
-	// 右手用
+	Serial.print("Receive: ");
+	Serial.print(readData);
+	Serial.print("  ->  ");
+
+	printKeyEvent(rowPin, colPin, isPress);
+	// ホスト：左手、サブ：右手
 	currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
 }
 
@@ -99,8 +114,8 @@ void applyKeyState() {
 }
 
 void sendThisSideState() {
-	if (!Serial1.available()) return;
-	
+	if (!Serial1.availableForWrite()) return;
+
 	int isPress;
 	byte sendData = 0b00000000;
 
@@ -115,6 +130,8 @@ void sendThisSideState() {
 					isPress = 1;
 				}
 				sendData = (byte) (0b00000000 | isPress << 6 | i << 3 | j);
+				Serial.print("Send: ");
+				Serial.println(sendData);
 				Serial1.write(sendData);
 			}
 			beforeState[i][j] = currentState[i][j];

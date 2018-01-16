@@ -9,4 +9,3 @@ const byte keyMap[ROW_NUM][COL_NUM*2]  = {
 	{KC_NULL, KC_LALT, KC_LGUI, KC_LSFT, KC_SPC,  KC_NULL, /*|*/ KC_NULL, KC_BSPC, KC_ENT,  KC_RGUI, KC_BSLS, KC_NULL }
 	/* --------------------------------- LEFT side ----------|------- RIGHT side ------------------------------------ */
 };
-

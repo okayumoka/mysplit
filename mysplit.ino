@@ -3,11 +3,13 @@
 #include "Keyboard.h"
 #include "keymap.h"
 
+#define IS_HOST_SIDE true
+
 const int rowPins[ROW_NUM] = { 2, 3, 4, 5, 6 }; // OUTPUTのピン。走査ピン
 const int colPins[COL_NUM] = { 7, 8, 9, 10, 11, 12 }; // INPUT_PULLUPのピン。
 
-bool currentState[ROW_NUM][COL_NUM_2];
-bool beforeState[ROW_NUM][COL_NUM_2];
+bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
+bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態
 
 int i;
 int j;
@@ -36,12 +38,16 @@ void setup() {
 }
 
 void loop() {
-	getHostState();
-	getSubState();
+	getThisSideState();
+#ifdef IS_HOST_SIDE
+	getOtherSideState();
 	applyKeyState();
+#else
+	sendThisSideState();
+#endif
 }
 
-void getHostState() {
+void getThisSideState() {
 	for (i = 0; i < ROW_NUM; i++) {
 		int rowPin = rowPins[i];
 		digitalWrite(rowPin, LOW);
@@ -53,10 +59,10 @@ void getHostState() {
 	}
 }
 
-void getSubState() {
+void getOtherSideState() {
 	if (!Serial1.available()) return;
 
-	int readData = Serial1.read();
+	byte readData = Serial1.read();
 	if (readData == -1) return;
 
 	// 通信方式について
@@ -66,10 +72,10 @@ void getSubState() {
 	// CDE ... rowPinの番号（右手用の範囲内で。したがって0～5）
 	// FGH ... colPinの番号（右手用の範囲内で。したがって0～6）
 
-	bool isPress = (bool) ((readData & 0x10000000 >> 7) == 0);
-	bool isLeft  = (bool) ((readData & 0x01000000 >> 6) == 0);
-	int rowPin   = (int)  (readData & 0x00111000 >> 3);
-	int colPin   = (int)  (readData & 0x00000111);
+	bool eof     = (bool) ( readData & 0b10000000) == 0b10000000);
+	bool isPress = (bool) ((readData & 0b01000000) == 0b01000000);
+	int rowPin   = (int)  ( readData & 0b00111000 >> 3);
+	int colPin   = (int)  ( readData & 0b00000111 );
 
 	// 右手用
 	currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
@@ -80,21 +86,51 @@ void applyKeyState() {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
-					Serial.print("PRESS   ");
 					Keyboard.press(keyMap[i][j]);
+					printKeyEvent(i, j, true);
 				} else {
-					Serial.print("RELEASE ");
 					Keyboard.release(keyMap[i][j]);
+					printKeyEvent(i, j, false);
 				}
-				Serial.print(i);
-				Serial.print(", ");
-				Serial.println(j);
 			}
 			beforeState[i][j] = currentState[i][j];
 		}
 	}
 }
 
+void sendThisSideState() {
+	if (!Serial1.available()) return;
+	
+	int isPress;
+	byte sendData = 0b00000000;
 
+	for (i = 0; i < ROW_NUM; i++) {
+		for (j = 0; j < COL_NUM; j++) {
+			if (currentState[i][j] != beforeState[i][j]) {
+				if (currentState[i][j] == LOW) {
+					printKeyEvent(i, j, true);
+					isPress = 0;
+				} else {
+					printKeyEvent(i, j, false);
+					isPress = 1;
+				}
+				sendData = (byte) (0b00000000 | isPress << 6 | i << 3 | j);
+				Serial1.write(sendData);
+			}
+			beforeState[i][j] = currentState[i][j];
+		}
+	}
+}
 
+void printKeyEvent(int row, int col, bool isPress) {
+	if (isPress) {
+		Serial.print("PRESS   (");
+	} else {
+		Serial.print("RELEASE (");
+	}
+	Serial.print(i);
+	Serial.print(", ");
+	Serial.print(j);
+	Serial.println(")");
+}
 

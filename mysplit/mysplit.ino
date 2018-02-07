@@ -1,12 +1,12 @@
 // MySplit
 
-// #define HOST_SIDE
+#define HOST_SIDE
 
 #include "Keyboard.h"
 #include "keymap.h"
 
 const int rowPins[ROW_NUM] = { 2, 3, 4, 5, 6 }; // OUTPUTのピン。走査ピン
-const int colPins[COL_NUM] = { 7, 8, 9, 10, 11, 12 }; // INPUT_PULLUPのピン。
+const int colPins[COL_NUM] = { 7, 8, 9, 10, 14, 15 }; // INPUT_PULLUPのピン。
 
 bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
 bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態

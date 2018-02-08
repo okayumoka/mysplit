@@ -30,6 +30,7 @@ void setup() {
 		for (j = 0; j < COL_NUM_2; j++) {
 			currentState[i][j] = HIGH;
 			beforeState[i][j] = HIGH;
+			pressedKeyCode[i][j] = KC_NULL;
 		}
 	}
 
@@ -135,14 +136,18 @@ void applyKeyState() {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
 					keyCode = currentMap[i][j];
-					Keyboard.press(keyCode);
+					if (keyCode == KC_NULL) keyCode = keyMap[i][j];
+
 					pressedKeyCode[i][j] = keyCode;
+					Keyboard.press(keyCode);
 					printKeyEvent(i, j, true);
+					printPressedKey(keyCode);
 				} else {
 					keyCode = pressedKeyCode[i][j];
-					Keyboard.release(keyCode);
 					pressedKeyCode[i][j] = KC_NULL;
+					Keyboard.release(keyCode);
 					printKeyEvent(i, j, false);
+					printPressedKey(keyCode);
 				}
 			}
 			beforeState[i][j] = currentState[i][j];
@@ -155,7 +160,7 @@ void applyKeyState() {
 void sendThisSideState() {
 	if (!Serial1.availableForWrite()) return;
 
-	bool sended = false;
+	bool sentFlag = false;
 	int isPress;
 	byte sendData = 0b00000000;
 
@@ -170,7 +175,7 @@ void sendThisSideState() {
 					isPress = 1;
 				}
 				sendData = (byte) (0b00000000 | isPress << 6 | i << 3 | j);
-				sended = true;
+				sentFlag = true;
 				Serial.print("Send: ");
 				Serial.println(sendData);
 				Serial1.write(sendData);
@@ -178,7 +183,7 @@ void sendThisSideState() {
 			beforeState[i][j] = currentState[i][j];
 		}
 	}
-	if (sended) Serial1.write(0b10000001);	// 後続データなしを送信
+	if (sentFlag) Serial1.write(0b10000001);	// 後続データなしを送信
 }
 #endif
 

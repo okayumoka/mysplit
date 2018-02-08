@@ -8,7 +8,7 @@ str += '#ifndef __INCLUDED_KEYCODE_H__\r\n';
 str += '#define __INCLUDED_KEYCODE_H__\r\n';
 str += '\r\n';
 
-src.split(/\r\n/).forEach(function(line) {
+src.split(/[\r\n]+/).forEach(function(line) {
 	if (line == null ||  line == '') return;
 	let values = line.split(/\t/);
 	// console.log(values);

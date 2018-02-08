@@ -10,6 +10,7 @@ const int colPins[COL_NUM] = { 7, 8, 9, 10, 14, 15 }; // INPUT_PULLUPのピン�
 
 bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
 bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態
+byte pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
 
 int i;
 int j;
@@ -110,14 +111,37 @@ void getOtherSideState() {
 }
 
 void applyKeyState() {
+	// Upper Layer、Lower Layer が押されているかを取得
+	int layer = 0; // -1: Lower  0: Base  1: Upper
+	for (i = 0; i < ROW_NUM; i++) {
+		for (j = 0; j < COL_NUM_2; j++)  {
+			if (keyMap[i][j] == KC_ULAY && currentState[i][j] == LOW) {
+				layer++;
+			}
+			if (keyMap[i][j] == KC_LLAY && currentState[i][j] == LOW) {
+				layer--;
+			}
+		}
+	}
+	// byte **currentMap = keyMap;
+	byte currentMap[ROW_NUM][COL_NUM_2] = keyMap;
+	if (layer > 0) currentMap = keyMapUpper;
+	if (layer < 0) currentMap = keyMapLower;
+
+	// キーを送る
+	byte keyCode;
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
-					Keyboard.press(keyMap[i][j]);
+					keyCode = currentMap[i][j];
+					Keyboard.press(keyCode);
+					pressedKeyCode[i][j] = keyCode;
 					printKeyEvent(i, j, true);
 				} else {
-					Keyboard.release(keyMap[i][j]);
+					keyCode = pressedKeyCode[i][j];
+					Keyboard.release(keyCode);
+					pressedKeyCode[i][j] = KC_NULL;
 					printKeyEvent(i, j, false);
 				}
 			}
@@ -168,5 +192,10 @@ void printKeyEvent(int row, int col, bool isPress) {
 	Serial.print(", ");
 	Serial.print(j);
 	Serial.println(")");
+}
+
+void printPressedKey(byte keyCode) {
+	Serial.print("    KEYCODE: ");
+	Serial.println(keyCode);
 }
 

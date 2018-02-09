@@ -1,0 +1,20 @@
+{
+  "name": "layouteditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "vue.js",
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MITs",
+  "devDependencies": {
+    "css-loader": "^0.28.9",
+    "vue": "^2.5.13",
+    "vue-loader": "^14.1.1",
+    "vue-template-compiler": "^2.5.13",
+    "webpack": "^3.10.0"
+  }
+}

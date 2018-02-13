@@ -7,7 +7,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
 .srckey {
 	display: inline-block;
 	position: relative;
@@ -28,7 +28,7 @@
 	text-align: center;
 	overflow: hidden;
 	font-size: 12px;
-	font-family: 'Consolas';
+	font-family: 'Consolas', monospace;
 	background: white;
 }
 .srckey.selected div {
@@ -55,7 +55,7 @@
 
 <script>
 module.exports = {
-	props: [ 'name', 'keycode' ],
+	props: [ 'name', 'keyCode' ],
 	data: function() {
 		return {
 			className: 'srckey',

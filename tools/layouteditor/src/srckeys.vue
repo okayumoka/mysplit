@@ -106,7 +106,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
 .src-keyboard {
 	font-size: 0;
 }

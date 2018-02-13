@@ -2,12 +2,12 @@
 <template>
 	<div class="key" @click="onClick">
 		<div>
-			{{name}}
+			<span v-for="name in names">{{name}}<br></span>
 		</div>
 	</div>
 </template>
 
-<style>
+<style scoped>
 .key {
 	display: inline-block;
 	position: relative;
@@ -23,7 +23,7 @@
 	right: 2px;
 	bottom: 2px;
 	left: 2px;
-	line-height: 50px;
+	line-height: 16.5px;
 	border: solid 1px gray;
 	text-align: center;
 	overflow: hidden;
@@ -35,11 +35,12 @@
 
 <script>
 module.exports = {
-	props: [ ],
+	props: [ 'row', 'col' ],
 	data: function() {
 		return {
-			name: '----',
-			keyCode: null,
+			layer: 1, // 0:lower 1:normal 2:upper
+			names: ['---', '---', '---' ],	// current
+			keyCodes: [null, null, null],
 		}
 	},
 	created: function() {
@@ -48,6 +49,17 @@ module.exports = {
 	methods: {
 		onClick: function() {
 			this.$emit('onclick', this);
+		},
+		setName: function(layer, name) {
+			// this.names = [].concat(this.names);
+			// this.names[layer] = name;
+			this.names.splice(layer, 1, name);
+		},
+		setKeyCode: function(layer, keyCode) {
+			this.keyCodes.splice(layer, 1, keyCode);
+		},
+		setLayer: function(layer) {
+			this.layer = layer;
 		},
 	},
 };

@@ -3,7 +3,7 @@
 	<div id="layouteditor">
 		{{title}}
 		<div>
-			Size: <input @keydown="onKeyDown" type="number"> x <input type="number">
+			Size: <input type="number"> x <input type="number">
 		</div>
 		<div>
 			<srckeys ref="srckeys"></srckeys>
@@ -25,14 +25,19 @@
 		</div>
 
 		<button @click="onClickGenerate">Generate</button>
+		<a target="_blank" :href="downloadUrl" :download="downloadFilename">Download</a>
 		<div>
 			keymap.ino:<br>
 			<textarea v-model="keymapIno" cols="30" rows="10"></textarea>
 		</div>
+		<div>
+			Load layout from file:<br>
+			<input type="file" @change="onSelectFile">
+		</div>
 	</div>
 </template>
 
-<style>
+<style scoped>
 .keyboard {
 	float: left;
 	border: solid 1px red;
@@ -44,8 +49,59 @@
 
 <script>
 
-let layout = require('../layouts/default.5x6.json');
-console.log(layout);
+// let layout = require('../layouts/default.5x6.json');
+// console.log(layout);
+
+function generateOutputIno(keyMapList) {
+	// let arrayToStr = (ary) => {
+	// 	return '\t{ ' + ary.map(r => r.join(', ')).join(' },\n\t{ ') + ' }';
+	// };
+	let arrayToStr = (ary, index) => {
+		return '\t{ ' + 
+			ary.map(r => r.map(c => c.keyCodes[index]).join(', '))
+			.join(' },\n\t{ ') + 
+		' }';
+	};
+	return `// This is keymap.h for MySplit.
+
+// JSON
+// ${JSON.stringify(keyMapList)}
+	
+// Pro micro
+#include "keycode.h"
+const byte keyMapLower[ROW_NUM][COL_NUM_2] = {
+${arrayToStr(keyMapList, 0)}
+
+const byte keyMap[ROW_NUM][COL_NUM_2] = {
+${arrayToStr(keyMapList, 1)}
+};
+
+const byte keyMapUpper[ROW_NUM][COL_NUM_2] = {
+${arrayToStr(keyMapList, 2)}
+};
+`;
+}
+
+function genKeyMapArray(rowMax, colMax) {
+	let a = [];
+	for (let i = 0; i < rowMax; i++) {
+		a[i] = Array(colMax);
+	}
+	return a;
+}
+
+function parseSrcText(srcText) {
+	let lines = srcText.split(/\n/);
+	for (let i = 1; i < lines.length; i++) {
+		let preLine = lines[i-1].trim();
+		let jsonLine = lines[i].trim();
+		if (preLine == '// JSON') {
+			jsonLine = jsonLine.substr(2);
+			console.log(jsonLine);
+			return json = JSON.parse(jsonLine);
+		}
+	}
+}
 
 module.exports = {
 	data: function() {
@@ -54,16 +110,15 @@ module.exports = {
 			colIndex: [...Array(6).keys()],
 			rowIndex: [...Array(5).keys()],
 			currentLayerIndex: 1,
-			keymapIno: 'hoge',
+			keymapIno: '',
+			downloadUrl: '',
+			downloadFilename: 'empty',
+			srcText: '',
 		}
 	},
 	created: function() {
 	},
 	methods: {
-		onKeyDown: function(e) {
-			console.log(e);
-			console.log('0x' + e.keyCode.toString(16).toUpperCase());
-		},
 		onClickDest: function(destKey) {
 			let selectedSrcKey = this.$refs.srckeys.getSelectedKey();
 			console.log(destKey);
@@ -71,7 +126,6 @@ module.exports = {
 			if (selectedSrcKey != null) {
 				destKey.setName(this.currentLayerIndex, selectedSrcKey.name);
 				destKey.setKeyCode(this.currentLayerIndex, selectedSrcKey.keyCode);
-				// destKey.keyCodes = selectedSrcKey.keyCode;
 			}
 		},
 		onChangeLayer: function(name, index) {
@@ -79,53 +133,59 @@ module.exports = {
 			this.currentLayerIndex = index;
 		},
 		onClickGenerate: function() {
-			let keys = this.$children.filter((child) => {
-				return child.$options._componentTag == 'key';
-			});
-			console.log(keys);
-			console.log(keys.length);
+			let keys = this.getKeys();
 
-			let genarray = () => {
-				let a = [];
-				for (let i = 0; i < this.rowIndex.length; i++) {
-					a[i] = Array(this.colIndex.length);
-				}
-				return a;
-			};
-			let lower = genarray();
-			let normal = genarray();
-			let upper = genarray();
+			let keyInfoList = genKeyMapArray(this.rowIndex.length, this.colIndex.length);
 
 			keys.forEach((key) => {
 				let row = key.row;
 				let col = key.col;
-				let keyCodes = key.keyCodes;
-				lower[row][col] = keyCodes[0] == null ? 'KC_NULL' : keyCodes[0];
-				normal[row][col] = keyCodes[1] == null ? 'KC_NULL' : keyCodes[1];
-				upper[row][col] = keyCodes[2] == null ? 'KC_NULL' : keyCodes[2];
+				keyInfoList[row][col] = key.getKeyInfo();
 			});
 
-			let base = `
-#include "keycode.h"
-const byte keyMap[ROW_NUM][COL_NUM*2] = {
-
-};
-const byte keyMapUpper[ROW_NUM][COL_NUM_2]
-};
-const byte keyMapLower[ROW_NUM][COL_NUM_2] = {
-};
-`;
-			// #include "keycode.h"
-			// const byte keyMap[ROW_NUM][COL_NUM*2] = {
-			//   {}
-			// };
-			// const byte keyMapUpper[ROW_NUM][COL_NUM_2]
-			// };
-			// const byte keyMapLower[ROW_NUM][COL_NUM_2] = {
-			// };
-
-
-			console.log(normal);
+			let ino = generateOutputIno(keyInfoList);
+			this.downloadAsFile(ino, 'keymap.ino', 'application/text');
+			this.keymapIno = ino;
+		},
+		getKeys: function() {
+			return this.$children.filter((child) => {
+				return child.$options._componentTag == 'key';
+			});
+		},
+		downloadAsFile: function(str, filename, mimetype) {
+			let url = (window.URL || window.webkitURL).createObjectURL(new Blob([str], { 'type': mimetype }));
+			this.downloadUrl = url;
+			this.downloadFilename = filename;
+		},
+		onSelectFile: function(e) {
+			let target = e.target;
+			let file = target.files[0];
+			let reader = new FileReader();
+			reader.onload = (e) => {
+				// console.log(e);
+				// console.log(e.target.result);
+				this.srcText = e.target.result;
+				let srcJson = parseSrcText(this.srcText);
+				this.applyToLayout(srcJson);
+			};
+			reader.readAsText(file);
+		},
+		applyToLayout: function(srcJson) {
+			let keys = this.getKeys();
+			let lower = srcJson.lower;
+			let normal = srcJson.normal;
+			let upper = srcJson.upper;
+			console.log(srcJson);
+			keys.forEach((key) => {
+				let row = key.row;
+				let col = key.col;
+				let keyInfo = srcJson[row][col];
+				key.setKeyInfo(keyInfo);
+				// let keyCodes = key.keyCodes;
+				// lower[row][col] = keyCodes[0] == null ? 'KC_NULL' : keyCodes[0];
+				// normal[row][col] = keyCodes[1] == null ? 'KC_NULL' : keyCodes[1];
+				// upper[row][col] = keyCodes[2] == null ? 'KC_NULL' : keyCodes[2];
+			});
 		},
 	},
 };

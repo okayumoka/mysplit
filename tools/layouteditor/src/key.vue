@@ -61,6 +61,22 @@ module.exports = {
 		setLayer: function(layer) {
 			this.layer = layer;
 		},
+		getKeyInfo: function() {
+			let names = this.names;
+			let keyCodes = [];
+			this.keyCodes.forEach(function(keyCode) {
+				keyCodes.push(keyCode == null ? 'KC_NULL' : keyCode);
+			});
+			return { names, keyCodes };
+		},
+		setKeyInfo: function(keyInfo) {
+			this.names.splice(0, 1, keyInfo.names[0]);
+			this.names.splice(1, 1, keyInfo.names[1]);
+			this.names.splice(2, 1, keyInfo.names[2]);
+			this.keyCodes.splice(0, 1, keyInfo.keyCodes[0]);
+			this.keyCodes.splice(1, 1, keyInfo.keyCodes[1]);
+			this.keyCodes.splice(2, 1, keyInfo.keyCodes[2]);
+		},
 	},
 };
 </script>

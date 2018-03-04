@@ -124,10 +124,6 @@ void applyKeyState() {
 			}
 		}
 	}
-	// byte **currentMap = keyMap;
-	byte currentMap[ROW_NUM][COL_NUM_2] = keyMap;
-	if (layer > 0) currentMap = keyMapUpper;
-	if (layer < 0) currentMap = keyMapLower;
 
 	// キーを送る
 	byte keyCode;
@@ -135,7 +131,10 @@ void applyKeyState() {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
-					keyCode = currentMap[i][j];
+					if (layer == 0) keyCode = keyMap[i][j];
+					else if (layer > 0) keyCode = keyMapUpper[i][j];
+					else if (layer < 0) keyCode = keyMapLower[i][j];
+					// keyCode = currentMap[i][j];
 					if (keyCode == KC_NULL) keyCode = keyMap[i][j];
 
 					pressedKeyCode[i][j] = keyCode;

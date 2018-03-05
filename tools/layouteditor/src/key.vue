@@ -2,7 +2,9 @@
 <template>
 	<div class="key" @click="onClick">
 		<div>
-			<span v-for="name in names">{{name}}<br></span>
+			<span>{{names[2]}}<br></span>
+			<span>{{names[1]}}<br></span>
+			<span>{{names[0]}}<br></span>
 		</div>
 	</div>
 </template>

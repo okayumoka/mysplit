@@ -139,7 +139,7 @@
 
 0xB0	KC_RET	Return
 0xB1	KC_ESC	Escape
-0xB2	KC_BSPC	Backspace
+0xB2	KC_BS	Backspace
 0xB3	KC_TAB	Tab
 
 0xC1	KC_CAPS	CapsLock
@@ -155,6 +155,7 @@
 0xCB	KC_F10
 0xCC	KC_F11
 0xCD	KC_F12
+0xCF	KC_PSCR
 
 0xD1	KC_INS	Insert
 0xD2	KC_HOME	Home
@@ -182,3 +183,7 @@
 0xF9	KC_F22
 0xFA	KC_F23
 0xFB	KC_F24
+
+0x00	KC_MENU
+0x00	KC_SCLK	Screen Lock
+0x00	KC_PAUS	Pause

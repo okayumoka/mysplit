@@ -1,6 +1,6 @@
 // MySplit
 
-#define HOST_SIDE
+// #define HOST_SIDE
 
 #include "Keyboard.h"
 #include "keymap.h"
@@ -85,15 +85,20 @@ void getOtherSideState() {
 
 		// 通信方式について
 		// 0bABCDEFGH
-		// A   ... 1のとき、後続データなし（終了）
-		// B   ... Press時は0、Release時は1
+		// AB  ... 状態。00:無効 01:Press 10:Release 11:後続データなし
 		// CDE ... rowPinの番号（右手用の範囲内で。したがって0～5）
 		// FGH ... colPinの番号（右手用の範囲内で。したがって0～6）
 
-		bool eof     = (bool) ((readData & 0b10000000) == 0b10000000);
-		bool isPress = (bool) ((readData & 0b01000000) == 0b00000000);
+		// bool eof     = (bool) ((readData & 0b10000000) == 0b10000000);
+		// bool isPress = (bool) ((readData & 0b01000000) == 0b00000000);
+		int state    = (int)  ((readData & 0b11000000) >> 6);
 		int rowPin   = (int)  ((readData & 0b00111000) >> 3);
 		int colPin   = (int)  ( readData & 0b00000111 );
+
+		bool eof = (state == 0b11) || (state == 0b00);
+		bool isPress = state == 0b01;
+		if (rowPin >= ROW_NUM) rowPin = ROW_NUM - 1;
+		if (colPin >= COL_NUM) colPin = COL_NUM - 1;
 
 		if (eof) { break; }
 
@@ -118,9 +123,11 @@ void applyKeyState() {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (keyMap[i][j] == KC_ULAY && currentState[i][j] == LOW) {
 				layer++;
+				currentState[i][j] = HIGH;
 			}
 			if (keyMap[i][j] == KC_LLAY && currentState[i][j] == LOW) {
 				layer--;
+				currentState[i][j] = HIGH;
 			}
 		}
 	}
@@ -160,7 +167,7 @@ void sendThisSideState() {
 	if (!Serial1.availableForWrite()) return;
 
 	bool sentFlag = false;
-	int isPress;
+	int state;
 	byte sendData = 0b00000000;
 
 	for (i = 0; i < ROW_NUM; i++) {
@@ -168,12 +175,12 @@ void sendThisSideState() {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
 					printKeyEvent(i, j, true);
-					isPress = 0;
+					state = 0b01000000;
 				} else {
 					printKeyEvent(i, j, false);
-					isPress = 1;
+					state = 0b10000000;
 				}
-				sendData = (byte) (0b00000000 | isPress << 6 | i << 3 | j);
+				sendData = (byte) (state | i << 3 | j);
 				sentFlag = true;
 				Serial.print("Send: ");
 				Serial.println(sendData);
@@ -182,7 +189,7 @@ void sendThisSideState() {
 			beforeState[i][j] = currentState[i][j];
 		}
 	}
-	if (sentFlag) Serial1.write(0b10000001);	// 後続データなしを送信
+	if (sentFlag) Serial1.write(0b11111111);	// 後続データなしを送信
 }
 #endif
 
@@ -192,9 +199,9 @@ void printKeyEvent(int row, int col, bool isPress) {
 	} else {
 		Serial.print("RELEASE (");
 	}
-	Serial.print(i);
+	Serial.print(row);
 	Serial.print(", ");
-	Serial.print(j);
+	Serial.print(col);
 	Serial.println(")");
 }
 

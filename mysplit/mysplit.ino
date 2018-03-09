@@ -14,6 +14,8 @@ byte pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
 
 int i;
 int j;
+bool upperLayerKey = 0;
+bool lowerLayerKey = 0;
 
 void setup() {
 	for (i = 0; i < ROW_NUM; i++) {
@@ -65,18 +67,6 @@ void getThisSideState() {
 
 #ifdef HOST_SIDE
 void getOtherSideState() {
-	// if (!Serial1.available()) {
-	// 	// サブ側と通信できていない場合は、サブ側をすべて未押下にしておく。
-	// 	// そうでないと、何かの拍子に通信できなくなったとき、
-	// 	// キーが押しっぱなしになる可能性がある。
-	// 	for (i = 0; i < ROW_NUM; i++) {
-	// 		for (j = 0; j < COL_NUM; j++) {
-	// 			currentState[i][j + COL_NUM] = HIGH;
-	// 		}
-	// 	}
-	// 	return;
-	// }
-
 	while (true) {
 		if (!Serial1.available()) break;
 
@@ -102,34 +92,40 @@ void getOtherSideState() {
 
 		if (eof) { break; }
 
-		// Serial.print("Receive: ");
-		// Serial.print(readData, BIN);
-		// Serial.print(" r=");
-		// Serial.print(rowPin);
-		// Serial.print(" c=");
-		// Serial.print(colPin);
-		// Serial.print("  ->  ");
+		Serial.print("Receive: ");
+		Serial.print(readData, BIN);
+		Serial.print(" r=");
+		Serial.print(rowPin);
+		Serial.print(" c=");
+		Serial.print(colPin);
+		Serial.print("  ->  ");
 
-		// printKeyEvent(rowPin, colPin, isPress, 0);
+		printKeyEvent(rowPin, colPin, isPress, 0);
 		// ホスト：左手、サブ：右手
 		currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
 	}
 }
 void applyKeyState() {
 	// Upper Layer、Lower Layer が押されているかを取得
-	int layer = 0; // -1: Lower  0: Base  1: Upper
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM_2; j++)  {
-			if (keyMap[i][j] == KC_ULAY && currentState[i][j] == LOW) {
-				layer++;
-				// currentState[i][j] = HIGH;
-			}
-			if (keyMap[i][j] == KC_LLAY && currentState[i][j] == LOW) {
-				layer--;
-				// currentState[i][j] = HIGH;
+			if (currentState[i][j] != beforeState[i][j]) {
+				if (keyMap[i][j] == KC_ULAY) {
+					upperLayerKey = currentState[i][j] == LOW;
+					beforeState[i][j] = currentState[i][j];
+					Serial.println(upperLayerKey);
+				}
+				if (keyMap[i][j] == KC_LLAY) {
+					lowerLayerKey = currentState[i][j] == LOW;
+					beforeState[i][j] = currentState[i][j];
+					Serial.println(lowerLayerKey);
+				}
 			}
 		}
 	}
+	int layer = 0; // -1: Lower  0: Base  1: Upper
+	if (upperLayerKey) layer++;
+	if (lowerLayerKey) layer--;
 
 	// キーを送る
 	byte keyCode;
@@ -173,50 +169,25 @@ void sendThisSideState() {
 
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM; j++) {
-			if (currentState[i][j] == LOW) {
-				// printKeyEvent(i, j, true, 0);
-				state = 0b01000000;
-			} else {
-				// printKeyEvent(i, j, false, 0);
-				state = 0b10000000;
+			if (currentState[i][j] != beforeState[i][j]) {
+				if (currentState[i][j] == LOW) {
+					printKeyEvent(i, j, true, 0);
+					state = 0b01000000;
+				} else {
+					printKeyEvent(i, j, false, 0);
+					state = 0b10000000;
+				}
+				sendData = (byte) (state | i << 3 | j);
+				sentFlag = true;
+				Serial.print("Send: ");
+				Serial.println(sendData);
+				Serial1.write(sendData);
 			}
-			sendData = (byte) (state | i << 3 | j);
-			sentFlag = true;
-			// Serial.print("Send: ");
-			// Serial.println(sendData);
-			Serial1.write(sendData);
+			beforeState[i][j] = currentState[i][j];
 		}
 	}
 	if (sentFlag) Serial1.write(0b11111111);	// 後続データなしを送信
 }
-// void sendThisSideState() {
-// 	if (!Serial1.availableForWrite()) return;
-//
-// 	bool sentFlag = false;
-// 	int state;
-// 	byte sendData = 0b00000000;
-//
-// 	for (i = 0; i < ROW_NUM; i++) {
-// 		for (j = 0; j < COL_NUM; j++) {
-// 			if (currentState[i][j] != beforeState[i][j]) {
-// 				if (currentState[i][j] == LOW) {
-// 					printKeyEvent(i, j, true, 0);
-// 					state = 0b01000000;
-// 				} else {
-// 					printKeyEvent(i, j, false, 0);
-// 					state = 0b10000000;
-// 				}
-// 				sendData = (byte) (state | i << 3 | j);
-// 				sentFlag = true;
-// 				Serial.print("Send: ");
-// 				Serial.println(sendData);
-// 				Serial1.write(sendData);
-// 			}
-// 			beforeState[i][j] = currentState[i][j];
-// 		}
-// 	}
-// 	if (sentFlag) Serial1.write(0b11111111);	// 後続データなしを送信
-// }
 #endif
 
 void printKeyEvent(int row, int col, bool isPress, int layer) {

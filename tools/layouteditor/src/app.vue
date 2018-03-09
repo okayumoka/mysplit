@@ -71,6 +71,7 @@ function generateOutputIno(keyMapList) {
 #include "keycode.h"
 const byte keyMapLower[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 0)}
+};
 
 const byte keyMap[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 1)}

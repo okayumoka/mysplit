@@ -1,6 +1,6 @@
 // MySplit
 
-// #define HOST_SIDE
+#define HOST_SIDE
 
 #include "Keyboard.h"
 #include "keymap.h"
@@ -102,20 +102,19 @@ void getOtherSideState() {
 
 		if (eof) { break; }
 
-		Serial.print("Receive: ");
-		Serial.print(readData, BIN);
-		Serial.print(" r=");
-		Serial.print(rowPin);
-		Serial.print(" c=");
-		Serial.print(colPin);
-		Serial.print("  ->  ");
+		// Serial.print("Receive: ");
+		// Serial.print(readData, BIN);
+		// Serial.print(" r=");
+		// Serial.print(rowPin);
+		// Serial.print(" c=");
+		// Serial.print(colPin);
+		// Serial.print("  ->  ");
 
-		printKeyEvent(rowPin, colPin, isPress);
+		// printKeyEvent(rowPin, colPin, isPress, 0);
 		// ホスト：左手、サブ：右手
 		currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
 	}
 }
-
 void applyKeyState() {
 	// Upper Layer、Lower Layer が押されているかを取得
 	int layer = 0; // -1: Lower  0: Base  1: Upper
@@ -123,11 +122,11 @@ void applyKeyState() {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (keyMap[i][j] == KC_ULAY && currentState[i][j] == LOW) {
 				layer++;
-				currentState[i][j] = HIGH;
+				// currentState[i][j] = HIGH;
 			}
 			if (keyMap[i][j] == KC_LLAY && currentState[i][j] == LOW) {
 				layer--;
-				currentState[i][j] = HIGH;
+				// currentState[i][j] = HIGH;
 			}
 		}
 	}
@@ -143,16 +142,18 @@ void applyKeyState() {
 					else if (layer < 0) keyCode = keyMapLower[i][j];
 					// keyCode = currentMap[i][j];
 					if (keyCode == KC_NULL) keyCode = keyMap[i][j];
+					if (keyCode == KC_ULAY) continue;
+					if (keyCode == KC_LLAY) continue;
 
 					pressedKeyCode[i][j] = keyCode;
 					Keyboard.press(keyCode);
-					printKeyEvent(i, j, true);
+					printKeyEvent(i, j, true, layer);
 					printPressedKey(keyCode);
 				} else {
 					keyCode = pressedKeyCode[i][j];
 					pressedKeyCode[i][j] = KC_NULL;
 					Keyboard.release(keyCode);
-					printKeyEvent(i, j, false);
+					printKeyEvent(i, j, false, layer);
 					printPressedKey(keyCode);
 				}
 			}
@@ -172,28 +173,53 @@ void sendThisSideState() {
 
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM; j++) {
-			if (currentState[i][j] != beforeState[i][j]) {
-				if (currentState[i][j] == LOW) {
-					printKeyEvent(i, j, true);
-					state = 0b01000000;
-				} else {
-					printKeyEvent(i, j, false);
-					state = 0b10000000;
-				}
-				sendData = (byte) (state | i << 3 | j);
-				sentFlag = true;
-				Serial.print("Send: ");
-				Serial.println(sendData);
-				Serial1.write(sendData);
+			if (currentState[i][j] == LOW) {
+				// printKeyEvent(i, j, true, 0);
+				state = 0b01000000;
+			} else {
+				// printKeyEvent(i, j, false, 0);
+				state = 0b10000000;
 			}
-			beforeState[i][j] = currentState[i][j];
+			sendData = (byte) (state | i << 3 | j);
+			sentFlag = true;
+			// Serial.print("Send: ");
+			// Serial.println(sendData);
+			Serial1.write(sendData);
 		}
 	}
 	if (sentFlag) Serial1.write(0b11111111);	// 後続データなしを送信
 }
+// void sendThisSideState() {
+// 	if (!Serial1.availableForWrite()) return;
+//
+// 	bool sentFlag = false;
+// 	int state;
+// 	byte sendData = 0b00000000;
+//
+// 	for (i = 0; i < ROW_NUM; i++) {
+// 		for (j = 0; j < COL_NUM; j++) {
+// 			if (currentState[i][j] != beforeState[i][j]) {
+// 				if (currentState[i][j] == LOW) {
+// 					printKeyEvent(i, j, true, 0);
+// 					state = 0b01000000;
+// 				} else {
+// 					printKeyEvent(i, j, false, 0);
+// 					state = 0b10000000;
+// 				}
+// 				sendData = (byte) (state | i << 3 | j);
+// 				sentFlag = true;
+// 				Serial.print("Send: ");
+// 				Serial.println(sendData);
+// 				Serial1.write(sendData);
+// 			}
+// 			beforeState[i][j] = currentState[i][j];
+// 		}
+// 	}
+// 	if (sentFlag) Serial1.write(0b11111111);	// 後続データなしを送信
+// }
 #endif
 
-void printKeyEvent(int row, int col, bool isPress) {
+void printKeyEvent(int row, int col, bool isPress, int layer) {
 	if (isPress) {
 		Serial.print("PRESS   (");
 	} else {
@@ -202,6 +228,8 @@ void printKeyEvent(int row, int col, bool isPress) {
 	Serial.print(row);
 	Serial.print(", ");
 	Serial.print(col);
+	Serial.print(", ");
+	Serial.print(layer);
 	Serial.println(")");
 }
 

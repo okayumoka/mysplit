@@ -21,16 +21,16 @@
 		</div>
 		<div class="row">
 			<srckey key-code="KC_GRAV" name="` ~" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_1   " name="1" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_2   " name="2" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_3   " name="3" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_4   " name="4" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_5   " name="5" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_6   " name="6" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_7   " name="7" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_8   " name="8" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_9   " name="9" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_0   " name="0" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_1   " name="1 !" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_2   " name="2 @" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_3   " name="3 #"@onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_4   " name="4 $" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_5   " name="5 %" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_6   " name="6 ^" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_7   " name="7 &" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_8   " name="8 *" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_9   " name="9 (" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_0   " name="0 )" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_MINS" name="- _" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_EQL " name="= +" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_BS  " name="BS" @onclick="onClickSrcKey" class="minim"></srckey>
@@ -84,8 +84,8 @@
 			<srckey key-code="KC_b   " name="B" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_n   " name="N" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_m   " name="M" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_LT  " name="< ," @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_GT  " name="> ." @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_COMM" name=", <" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_DOT " name=". >" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_SLSH" name="/ ?" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RSFT" name="RShift" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_UP  " name="↑" @onclick="onClickSrcKey"></srckey>

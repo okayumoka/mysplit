@@ -69,15 +69,15 @@ function generateOutputIno(keyMapList) {
 	
 // Pro micro
 #include "keycode.h"
-const byte keyMapLower[ROW_NUM][COL_NUM_2] = {
+const int keyMapLower[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 0)}
 };
 
-const byte keyMap[ROW_NUM][COL_NUM_2] = {
+const int keyMap[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 1)}
 };
 
-const byte keyMapUpper[ROW_NUM][COL_NUM_2] = {
+const int keyMapUpper[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 2)}
 };
 `;

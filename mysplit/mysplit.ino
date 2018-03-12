@@ -10,7 +10,7 @@ const int colPins[COL_NUM] = { 7, 8, 9, 10, 14, 15 }; // INPUT_PULLUPのピン�
 
 bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
 bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態
-byte pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
+int pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
 
 int i;
 int j;
@@ -128,7 +128,7 @@ void applyKeyState() {
 	if (lowerLayerKey) layer--;
 
 	// キーを送る
-	byte keyCode;
+	int keyCode;
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (currentState[i][j] != beforeState[i][j]) {
@@ -142,13 +142,13 @@ void applyKeyState() {
 					if (keyCode == KC_LLAY) continue;
 
 					pressedKeyCode[i][j] = keyCode;
-					Keyboard.press(keyCode);
+					Keyboard.press((char) keyCode);
 					printKeyEvent(i, j, true, layer);
 					printPressedKey(keyCode);
 				} else {
 					keyCode = pressedKeyCode[i][j];
 					pressedKeyCode[i][j] = KC_NULL;
-					Keyboard.release(keyCode);
+					Keyboard.release((char) keyCode);
 					printKeyEvent(i, j, false, layer);
 					printPressedKey(keyCode);
 				}

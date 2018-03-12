@@ -27,7 +27,7 @@
 			<srckey key-code="KC_4   " name="4 $" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_5   " name="5 %" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_6   " name="6 ^" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_7   " name="7 &" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_7   " name="7 &amp;" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_8   " name="8 *" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_9   " name="9 (" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_0   " name="0 )" @onclick="onClickSrcKey"></srckey>
@@ -53,7 +53,7 @@
 			<srckey key-code="KC_p   " name="P" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_LB  " name="[ {" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RB  " name="] }" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_VBAR" name="| \" class="pipe minim" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_BSLS" name="\ |" class="pipe minim" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_DEL " name="Del" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_END " name="End" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_PGDN" name="PgDn" class="halfm" @onclick="onClickSrcKey"></srckey>
@@ -94,7 +94,7 @@
 			<srckey key-code="KC_LCTL" name="LCtrl" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_LGUI" name="LWin" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_LALT" name="LAlt" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_SPC" name="Space" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_SPC " name="Space" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RALT" name="RAlt" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RGUI" name="RWin" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_MENU" name="Menu" @onclick="onClickSrcKey"></srckey>
@@ -102,6 +102,29 @@
 			<srckey key-code="KC_LEFT" name="←" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_DOWN" name="↓" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RGHT" name="→" @onclick="onClickSrcKey"></srckey>
+		</div>
+		<div class="row" style="margin-bottom: 10px;">
+			<srckey key-code="KC_EXLM" name="!" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_AT  " name="@" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_HASH" name="#" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_DLR " name="$" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_PREC" name="%" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_CRET" name="^" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_AMP " name="&amp;" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_ASTR" name="*" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_LPRN" name="(" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_RPRN" name=")" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_USCR" name="_" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_PLUS" name="+" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_VBAR" name="|" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_TILD" name="~" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_LCB " name="{" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_RCB " name="}" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_CLN " name=":" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_DQUO" name="&quot;" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_LT  " name="&lt;" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_GT  " name="&gt;" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_QUES" name="?" @onclick="onClickSrcKey"></srckey>
 		</div>
 	</div>
 </template>

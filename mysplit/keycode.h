@@ -154,7 +154,9 @@
 #define KC_F10 0xCB
 #define KC_F11 0xCC
 #define KC_F12 0xCD
-#define KC_PSCR 0xCF
+#define KC_PSCR 0xCE
+#define KC_SCLK 0xCF
+#define KC_PAUS 0xD0
 #define KC_INS 0xD1
 #define KC_HOME 0xD2
 #define KC_PGUP 0xD3
@@ -165,8 +167,7 @@
 #define KC_LEFT 0xD8
 #define KC_DOWN 0xD9
 #define KC_UP 0xDA
-#define KC_ULAY 0xE0
-#define KC_LLAY 0xE1
+#define KC_NLOC 0xE0
 #define KC_F13 0xF0
 #define KC_F14 0xF1
 #define KC_F15 0xF2
@@ -179,8 +180,8 @@
 #define KC_F22 0xF9
 #define KC_F23 0xFA
 #define KC_F24 0xFB
-#define KC_MENU 0x00
-#define KC_SCLK 0x00
-#define KC_PAUS 0x00
+#define KC_MENU 0xFE
+#define KC_ULAY 0x100
+#define KC_LLAY 0x101
 
 #endif

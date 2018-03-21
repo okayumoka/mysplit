@@ -181,7 +181,7 @@
 #define KC_F23 0xFA
 #define KC_F24 0xFB
 #define KC_MENU 0xFE
-#define KC_ULAY 0x100
-#define KC_LLAY 0x101
+#define KC_RISE 0x100
+#define KC_LOWR 0x101
 
 #endif

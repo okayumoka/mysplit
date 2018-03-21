@@ -187,5 +187,5 @@
 
 0xFE	KC_MENU	MENU
 
-0x100	KC_ULAY	特殊キー Upper Layer
-0x101	KC_LLAY	特殊キー Lower Layer
+0x100	KC_RISE	特殊キー Raise
+0x101	KC_LOWR	特殊キー Lower

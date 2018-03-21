@@ -110,12 +110,12 @@ void applyKeyState() {
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (currentState[i][j] != beforeState[i][j]) {
-				if (keyMap[i][j] == KC_ULAY) {
+				if (keyMap[i][j] == KC_RISE) {
 					upperLayerKey = currentState[i][j] == LOW;
 					beforeState[i][j] = currentState[i][j];
 					Serial.println(upperLayerKey);
 				}
-				if (keyMap[i][j] == KC_LLAY) {
+				if (keyMap[i][j] == KC_LOWR) {
 					lowerLayerKey = currentState[i][j] == LOW;
 					beforeState[i][j] = currentState[i][j];
 					Serial.println(lowerLayerKey);
@@ -138,8 +138,8 @@ void applyKeyState() {
 					else if (layer < 0) keyCode = keyMapLower[i][j];
 					// keyCode = currentMap[i][j];
 					if (keyCode == KC_NULL) keyCode = keyMap[i][j];
-					if (keyCode == KC_ULAY) continue;
-					if (keyCode == KC_LLAY) continue;
+					if (keyCode == KC_RISE) continue;
+					if (keyCode == KC_LOWR) continue;
 
 					pressedKeyCode[i][j] = keyCode;
 					Keyboard.press((char) keyCode);

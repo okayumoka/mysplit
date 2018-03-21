@@ -37,7 +37,7 @@
 			<srckey key-code="KC_INS " name="Ins" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_HOME" name="Home" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_PGUP" name="PgUp" @onclick="onClickSrcKey" class="halfm"></srckey>
-			<srckey key-code="KC_ULAY" name="Upper" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_RISE" name="Raise" @onclick="onClickSrcKey"></srckey>
 		</div>
 		<div class="row">
 			<srckey key-code="KC_TAB " name="Tab" @onclick="onClickSrcKey"></srckey>
@@ -57,7 +57,7 @@
 			<srckey key-code="KC_DEL " name="Del" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_END " name="End" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_PGDN" name="PgDn" class="halfm" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_LLAY" name="Lower" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_LOWR" name="Lower" @onclick="onClickSrcKey"></srckey>
 		</div>
 		<div class="row">
 			<srckey key-code="KC_CAPS" name="Caps" @onclick="onClickSrcKey"></srckey>

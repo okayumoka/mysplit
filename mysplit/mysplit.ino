@@ -1,6 +1,6 @@
 // MySplit
 
-#define HOST_SIDE
+// #define HOST_SIDE
 
 #include "Keyboard.h"
 #include "keymap.h"
@@ -11,11 +11,15 @@ const int colPins[COL_NUM] = { 7, 8, 9, 10, 14, 15 }; // INPUT_PULLUPのピン�
 bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
 bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態
 int pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
+int pressedKeyCount[ROW_NUM][COL_NUM_2]; // 押下してからのカウント
 
 int i;
 int j;
-bool upperLayerKey = 0;
+bool raiseLayerKey = 0;
 bool lowerLayerKey = 0;
+
+#define IGNORE_FRAMES 4
+
 
 void setup() {
 	for (i = 0; i < ROW_NUM; i++) {
@@ -33,6 +37,7 @@ void setup() {
 			currentState[i][j] = HIGH;
 			beforeState[i][j] = HIGH;
 			pressedKeyCode[i][j] = KC_NULL;
+			pressedKeyCount[i][j] = 0;
 		}
 	}
 
@@ -92,49 +97,58 @@ void getOtherSideState() {
 
 		if (eof) { break; }
 
-		Serial.print("Receive: ");
-		Serial.print(readData, BIN);
-		Serial.print(" r=");
-		Serial.print(rowPin);
-		Serial.print(" c=");
-		Serial.print(colPin);
-		Serial.print("  ->  ");
+		// Serial.print("Receive: ");
+		// Serial.print(readData, BIN);
+		// Serial.print(" r=");
+		// Serial.print(rowPin);
+		// Serial.print(" c=");
+		// Serial.print(colPin);
+		// Serial.print("  ->  ");
 
-		printKeyEvent(rowPin, colPin, isPress, 0);
+		// printKeyEvent(rowPin, colPin, isPress, 0);
 		// ホスト：左手、サブ：右手
 		currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
 	}
 }
 void applyKeyState() {
-	// Upper Layer、Lower Layer が押されているかを取得
+	// Raise Layer、Lower Layer が押されているかを取得
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM_2; j++)  {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (keyMap[i][j] == KC_RISE) {
-					upperLayerKey = currentState[i][j] == LOW;
+					raiseLayerKey = currentState[i][j] == LOW;
 					beforeState[i][j] = currentState[i][j];
-					Serial.println(upperLayerKey);
+					// Serial.println(raiseLayerKey);
 				}
 				if (keyMap[i][j] == KC_LOWR) {
 					lowerLayerKey = currentState[i][j] == LOW;
 					beforeState[i][j] = currentState[i][j];
-					Serial.println(lowerLayerKey);
+					// Serial.println(lowerLayerKey);
 				}
 			}
 		}
 	}
-	int layer = 0; // -1: Lower  0: Base  1: Upper
-	if (upperLayerKey) layer++;
+	int layer = 0; // -1: Lower  0: Base  1: Raise
+	if (raiseLayerKey) layer++;
 	if (lowerLayerKey) layer--;
 
 	// キーを送る
 	int keyCode;
 	for (i = 0; i < ROW_NUM; i++) {
 		for (j = 0; j < COL_NUM_2; j++)  {
+			// チャタリング防止のための待ち処理
+			if (pressedKeyCount[i][j] > 0) {
+				if (pressedKeyCount[i][j]++ < IGNORE_FRAMES) {
+					continue;
+				} else {
+					pressedKeyCount[i][j] = 0;
+				}
+			}
+			// 押下状態の変化を検出してキーを送る
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
 					if (layer == 0) keyCode = keyMap[i][j];
-					else if (layer > 0) keyCode = keyMapUpper[i][j];
+					else if (layer > 0) keyCode = keyMapRaise[i][j];
 					else if (layer < 0) keyCode = keyMapLower[i][j];
 					// keyCode = currentMap[i][j];
 					if (keyCode == KC_NULL) keyCode = keyMap[i][j];
@@ -142,15 +156,16 @@ void applyKeyState() {
 					if (keyCode == KC_LOWR) continue;
 
 					pressedKeyCode[i][j] = keyCode;
+					pressedKeyCount[i][j] = 1;
 					Keyboard.press((char) keyCode);
-					printKeyEvent(i, j, true, layer);
-					printPressedKey(keyCode);
+					// printKeyEvent(i, j, true, layer);
+					// printPressedKey(keyCode);
 				} else {
 					keyCode = pressedKeyCode[i][j];
 					pressedKeyCode[i][j] = KC_NULL;
 					Keyboard.release((char) keyCode);
-					printKeyEvent(i, j, false, layer);
-					printPressedKey(keyCode);
+					// printKeyEvent(i, j, false, layer);
+					// printPressedKey(keyCode);
 				}
 			}
 			beforeState[i][j] = currentState[i][j];
@@ -171,16 +186,16 @@ void sendThisSideState() {
 		for (j = 0; j < COL_NUM; j++) {
 			if (currentState[i][j] != beforeState[i][j]) {
 				if (currentState[i][j] == LOW) {
-					printKeyEvent(i, j, true, 0);
+					// printKeyEvent(i, j, true, 0);
 					state = 0b01000000;
 				} else {
-					printKeyEvent(i, j, false, 0);
+					// printKeyEvent(i, j, false, 0);
 					state = 0b10000000;
 				}
 				sendData = (byte) (state | i << 3 | j);
 				sentFlag = true;
-				Serial.print("Send: ");
-				Serial.println(sendData);
+				// Serial.print("Send: ");
+				// Serial.println(sendData);
 				Serial1.write(sendData);
 			}
 			beforeState[i][j] = currentState[i][j];

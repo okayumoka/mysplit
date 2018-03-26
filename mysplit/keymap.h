@@ -8,7 +8,7 @@
 #define COL_NUM_2 COL_NUM*2
 
 extern const int keyMap[ROW_NUM][COL_NUM_2];
-extern const int keyMapUpper[ROW_NUM][COL_NUM_2];
+extern const int keyMapRaise[ROW_NUM][COL_NUM_2];
 extern const int keyMapLower[ROW_NUM][COL_NUM_2];
 
 #endif

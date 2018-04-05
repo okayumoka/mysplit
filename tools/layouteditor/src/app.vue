@@ -77,7 +77,7 @@ const int keyMap[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 1)}
 };
 
-const int keyMapUpper[ROW_NUM][COL_NUM_2] = {
+const int keyMapRaise[ROW_NUM][COL_NUM_2] = {
 ${arrayToStr(keyMapList, 2)}
 };
 `;

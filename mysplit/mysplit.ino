@@ -1,6 +1,6 @@
 // MySplit
 
-// #define HOST_SIDE
+#define HOST_SIDE
 
 #include "Keyboard.h"
 #include "keymap.h"
@@ -18,7 +18,7 @@ int j;
 bool raiseLayerKey = 0;
 bool lowerLayerKey = 0;
 
-#define IGNORE_FRAMES 4
+#define IGNORE_FRAMES 120
 
 
 void setup() {

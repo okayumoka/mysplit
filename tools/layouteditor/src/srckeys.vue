@@ -99,7 +99,7 @@
 			<srckey key-code="KC_RGUI" name="RWin" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_MENU" name="Menu" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RCTL" name="RCtrl" class="minim" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_LEFT" name="←" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_LEFT" name="↝" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_DOWN" name="↓" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RGHT" name="→" @onclick="onClickSrcKey"></srckey>
 		</div>
@@ -108,7 +108,7 @@
 			<srckey key-code="KC_AT  " name="@" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_HASH" name="#" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_DLR " name="$" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_PREC" name="%" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_PERC" name="%" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_CRET" name="^" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_AMP " name="&amp;" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_ASTR" name="*" @onclick="onClickSrcKey"></srckey>

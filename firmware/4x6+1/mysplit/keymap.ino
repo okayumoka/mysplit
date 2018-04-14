@@ -1,27 +1,27 @@
 // This is keymap.h for MySplit.
 
 // JSON
-// null
+// [[{"names":["~","Tab","` ~"],"keyCodes":["KC_TILD","KC_TAB ","KC_GRAV"]},{"names":["!","Q","1 !"],"keyCodes":["KC_EXLM","KC_q   ","KC_1   "]},{"names":["@","W","2 @"],"keyCodes":["KC_AT  ","KC_w   ","KC_2   "]},{"names":["#","E","3 #"],"keyCodes":["KC_HASH","KC_e   ","KC_3   "]},{"names":["$","R","4 $"],"keyCodes":["KC_DLR ","KC_r   ","KC_4   "]},{"names":["%","T","5 %"],"keyCodes":["KC_PERC","KC_t   ","KC_5   "]},{"names":["---","---","---"],"keyCodes":["KC_NULL","KC_NULL","KC_NULL"]},{"names":["---","---","---"],"keyCodes":["KC_NULL","KC_NULL","KC_NULL"]},{"names":["^","Y","6 ^"],"keyCodes":["KC_CRET","KC_y   ","KC_6   "]},{"names":["&","U","7 &"],"keyCodes":["KC_AMP ","KC_u   ","KC_7   "]},{"names":["*","I","8 *"],"keyCodes":["KC_ASTR","KC_i   ","KC_8   "]},{"names":["(","O","9 ("],"keyCodes":["KC_LPRN","KC_o   ","KC_9   "]},{"names":[")","P","0 )"],"keyCodes":["KC_RPRN","KC_p   ","KC_0   "]},{"names":["---","BS","---"],"keyCodes":["KC_NULL","KC_BS  ","KC_NULL"]}],[{"names":["---","LCtrl","---"],"keyCodes":["KC_NULL","KC_LCTL","KC_NULL"]},{"names":["---","A","---"],"keyCodes":["KC_NULL","KC_a   ","KC_NULL"]},{"names":["---","S","---"],"keyCodes":["KC_NULL","KC_s   ","KC_NULL"]},{"names":["Del","D","Ins"],"keyCodes":["KC_DEL ","KC_d   ","KC_INS "]},{"names":["End","F","Home"],"keyCodes":["KC_END ","KC_f   ","KC_HOME"]},{"names":["PgDn","G","PgUp"],"keyCodes":["KC_PGDN","KC_g   ","KC_PGUP"]},{"names":["---","---","---"],"keyCodes":["KC_NULL","KC_NULL","KC_NULL"]},{"names":["---","---","---"],"keyCodes":["KC_NULL","KC_NULL","KC_NULL"]},{"names":["_","H","- _"],"keyCodes":["KC_USCR","KC_h   ","KC_MINS"]},{"names":["+","J","= +"],"keyCodes":["KC_PLUS","KC_j   ","KC_EQL "]},{"names":["{","K","[ {"],"keyCodes":["KC_LCB ","KC_k   ","KC_LB  "]},{"names":["}","L","] }"],"keyCodes":["KC_RCB ","KC_l   ","KC_RB  "]},{"names":["|","; :","\\ |"],"keyCodes":["KC_VBAR","KC_SCLN","KC_BSLS"]},{"names":["---","Enter","---"],"keyCodes":["KC_NULL","KC_RET ","KC_NULL"]}],[{"names":["---","LShift","---"],"keyCodes":["KC_NULL","KC_LSFT","KC_NULL"]},{"names":["F1","Z","PrtSc"],"keyCodes":["KC_F1  ","KC_z   ","KC_PSCR"]},{"names":["F2","X","ScrLk"],"keyCodes":["KC_F2  ","KC_x   ","KC_SCLK"]},{"names":["F3","C","Pause"],"keyCodes":["KC_F3  ","KC_c   ","KC_PAUS"]},{"names":["F4","V","---"],"keyCodes":["KC_F4  ","KC_v   ","KC_NULL"]},{"names":["F5","B","---"],"keyCodes":["KC_F5  ","KC_b   ","KC_NULL"]},{"names":["---","---","---"],"keyCodes":["KC_NULL","KC_NULL","KC_NULL"]},{"names":["---","---","---"],"keyCodes":["KC_NULL","KC_NULL","KC_NULL"]},{"names":["F6","N","↝"],"keyCodes":["KC_F6  ","KC_n   ","KC_LEFT"]},{"names":["F7","M","↓"],"keyCodes":["KC_F7  ","KC_m   ","KC_DOWN"]},{"names":["F8",", <","↑"],"keyCodes":["KC_F8  ","KC_COMM","KC_UP  "]},{"names":["F9",". >","→"],"keyCodes":["KC_F9  ","KC_DOT ","KC_RGHT"]},{"names":["F10","/ ?","---"],"keyCodes":["KC_F10 ","KC_SLSH","KC_NULL"]},{"names":["F11","' ''","F12"],"keyCodes":["KC_F11 ","KC_QUOT","KC_F12 "]}],[{"names":["---","Esc","---"],"keyCodes":["KC_NULL","KC_ESC ","KC_NULL"]},{"names":["---","LAlt","---"],"keyCodes":["KC_NULL","KC_LALT","KC_NULL"]},{"names":["---","Menu","---"],"keyCodes":["KC_NULL","KC_MENU","KC_NULL"]},{"names":["---","LWin","---"],"keyCodes":["KC_NULL","KC_LGUI","KC_NULL"]},{"names":["---","Lower","---"],"keyCodes":["KC_NULL","KC_LOWR","KC_NULL"]},{"names":["---","Space","---"],"keyCodes":["KC_NULL","KC_SPC ","KC_NULL"]},{"names":["---","Esc","---"],"keyCodes":["KC_NULL","KC_ESC ","KC_NULL"]},{"names":["---","Esc","---"],"keyCodes":["KC_NULL","KC_ESC ","KC_NULL"]},{"names":["---","Space","---"],"keyCodes":["KC_NULL","KC_SPC ","KC_NULL"]},{"names":["---","Raise","---"],"keyCodes":["KC_NULL","KC_RISE","KC_NULL"]},{"names":["---","←","---"],"keyCodes":["KC_NULL","KC_LEFT","KC_NULL"]},{"names":["---","↓","---"],"keyCodes":["KC_NULL","KC_DOWN","KC_NULL"]},{"names":["---","↑","---"],"keyCodes":["KC_NULL","KC_UP  ","KC_NULL"]},{"names":["---","→","---"],"keyCodes":["KC_NULL","KC_RGHT","KC_NULL"]}]]
 
 // Pro micro
 #include "keycode.h"
 const int keyMapLower[ROW_NUM][COL_NUM_2] = {
-	{ KC_TILD, KC_EXLM, KC_AT  , KC_HASH, KC_DLR , KC_PERC, KC_NULL, KC_NULL, KC_CRET, KC_AMP , KC_ASTR, KC_LPRN, KC_RPRN, KC_NULL },
-	{ KC_NULL, KC_NULL, KC_NULL, KC_DEL , KC_END , KC_PGDN, KC_NULL, KC_NULL, KC_USCR, KC_PLUS, KC_LCB , KC_RCB , KC_VBAR, KC_NULL },
-	{ KC_NULL, KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_NULL, KC_NULL, KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11  },
-	{ KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_ESC , KC_NULL, KC_NULL, KC_ESC , KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL }
+    { KC_TILD, KC_EXLM, KC_AT  , KC_HASH, KC_DLR , KC_PERC, KC_NULL, KC_NULL, KC_CRET, KC_AMP , KC_ASTR, KC_LPRN, KC_RPRN, KC_NULL },
+    { KC_NULL, KC_NULL, KC_NULL, KC_DEL , KC_END , KC_PGDN, KC_NULL, KC_NULL, KC_USCR, KC_PLUS, KC_LCB , KC_RCB , KC_VBAR, KC_NULL },
+    { KC_NULL, KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  , KC_NULL, KC_NULL, KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , KC_F11  },
+    { KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL }
 };
 
 const int keyMap[ROW_NUM][COL_NUM_2] = {
-	{ KC_TAB , KC_q   , KC_w   , KC_e   , KC_r   , KC_t   , KC_NULL, KC_NULL, KC_y   , KC_u   , KC_i   , KC_o   , KC_p   , KC_BS   },
-	{ KC_LCTL, KC_a   , KC_s   , KC_d   , KC_f   , KC_g   , KC_NULL, KC_NULL, KC_h   , KC_j   , KC_k   , KC_l   , KC_SCLN, KC_RET  },
-	{ KC_LSFT, KC_z   , KC_x   , KC_c   , KC_v   , KC_b   , KC_NULL, KC_NULL, KC_n   , KC_m   , KC_COMM, KC_DOT , KC_SLSH, KC_QUOT },
-	{ KC_ESC , KC_LALT, KC_ESC , KC_LGUI, KC_LOWR, KC_SPC , KC_ESC , KC_ESC , KC_SPC , KC_RISE, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT }
+    { KC_TAB , KC_q   , KC_w   , KC_e   , KC_r   , KC_t   , KC_NULL, KC_NULL, KC_y   , KC_u   , KC_i   , KC_o   , KC_p   , KC_BS   },
+    { KC_LCTL, KC_a   , KC_s   , KC_d   , KC_f   , KC_g   , KC_NULL, KC_NULL, KC_h   , KC_j   , KC_k   , KC_l   , KC_SCLN, KC_RET  },
+    { KC_LSFT, KC_z   , KC_x   , KC_c   , KC_v   , KC_b   , KC_NULL, KC_NULL, KC_n   , KC_m   , KC_COMM, KC_DOT , KC_SLSH, KC_QUOT },
+    { KC_ESC , KC_LALT, KC_MENU, KC_LGUI, KC_LOWR, KC_SPC , KC_ESC , KC_ESC , KC_SPC , KC_RISE, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT }
 };
 
 const int keyMapRaise[ROW_NUM][COL_NUM_2] = {
-	{ KC_GRAV, KC_1   , KC_2   , KC_3   , KC_4   , KC_5   , KC_NULL, KC_NULL, KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_NULL },
-	{ KC_NULL, KC_NULL, KC_NULL, KC_INS , KC_HOME, KC_PGUP, KC_NULL, KC_NULL, KC_MINS, KC_EQL , KC_LB  , KC_RB  , KC_BSLS, KC_NULL },
-	{ KC_NULL, KC_PSCR, KC_SCLK, KC_PAUS, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT, KC_NULL, KC_F12  },
-	{ KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_ESC , KC_NULL, KC_NULL, KC_ESC , KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL }
+    { KC_GRAV, KC_1   , KC_2   , KC_3   , KC_4   , KC_5   , KC_NULL, KC_NULL, KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_NULL },
+    { KC_NULL, KC_NULL, KC_NULL, KC_INS , KC_HOME, KC_PGUP, KC_NULL, KC_NULL, KC_MINS, KC_EQL , KC_LB  , KC_RB  , KC_BSLS, KC_NULL },
+    { KC_NULL, KC_PSCR, KC_SCLK, KC_PAUS, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_LEFT, KC_DOWN, KC_UP  , KC_RGHT, KC_NULL, KC_F12  },
+    { KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL, KC_NULL }
 };

@@ -183,5 +183,6 @@
 #define KC_MENU 0xFE
 #define KC_RISE 0x100
 #define KC_LOWR 0x101
+#define KC_CTSP 0x102
 
 #endif

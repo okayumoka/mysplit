@@ -189,3 +189,4 @@
 
 0x100	KC_RISE	特殊キー Raise
 0x101	KC_LOWR	特殊キー Lower
+0x102	KC_CTSP	特殊キー Ctrl+Space

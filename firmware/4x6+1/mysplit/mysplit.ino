@@ -22,205 +22,224 @@ bool lowerLayerKey = 0;
 
 
 void setup() {
-	for (i = 0; i < ROW_NUM; i++) {
-		int pin = rowPins[i];
-		pinMode(pin, OUTPUT);
-		digitalWrite(pin, HIGH);
-	}
-	for (i = 0; i < COL_NUM; i++) {
-		int pin = colPins[i];
-		pinMode(pin, INPUT_PULLUP);
-	}
+    for (i = 0; i < ROW_NUM; i++) {
+        int pin = rowPins[i];
+        pinMode(pin, OUTPUT);
+        digitalWrite(pin, HIGH);
+    }
+    for (i = 0; i < COL_NUM; i++) {
+        int pin = colPins[i];
+        pinMode(pin, INPUT_PULLUP);
+    }
 
-	for (i = 0; i < ROW_NUM; i++) {
-		for (j = 0; j < COL_NUM_2; j++) {
-			currentState[i][j] = HIGH;
-			beforeState[i][j] = HIGH;
-			pressedKeyCode[i][j] = KC_NULL;
-			pressedKeyCount[i][j] = 0;
-		}
-	}
+    for (i = 0; i < ROW_NUM; i++) {
+        for (j = 0; j < COL_NUM_2; j++) {
+            currentState[i][j] = HIGH;
+            beforeState[i][j] = HIGH;
+            pressedKeyCode[i][j] = KC_NULL;
+            pressedKeyCount[i][j] = 0;
+        }
+    }
 
-	Serial.begin(9600);
-	Serial1.begin(9600);
+    Serial.begin(9600);
+    Serial1.begin(9600);
 #ifdef HOST_SIDE
-	Keyboard.begin();
+    Keyboard.begin();
 #endif
 }
 
+#ifdef HOST_SIDE
 void loop() {
-	getThisSideState();
-#ifdef HOST_SIDE
-	getOtherSideState();
-	applyKeyState();
-#else
-	sendThisSideState();
-#endif
+    getThisSideState();
+    getOtherSideState();
+    applyKeyState();
 }
+#else
+void loop() {
+    getThisSideState();
+    sendThisSideState();
+}
+#endif
 
 void getThisSideState() {
-	for (i = 0; i < ROW_NUM; i++) {
-		int rowPin = rowPins[i];
-		digitalWrite(rowPin, LOW);
-		for (j = 0; j < COL_NUM; j++)  {
-			int colPin = colPins[j];
-			currentState[i][j] = digitalRead(colPin);
-		}
-		digitalWrite(rowPin, HIGH);
-	}
+    for (i = 0; i < ROW_NUM; i++) {
+        int rowPin = rowPins[i];
+        digitalWrite(rowPin, LOW);
+        for (j = 0; j < COL_NUM; j++)  {
+            int colPin = colPins[j];
+            currentState[i][j] = digitalRead(colPin);
+        }
+        digitalWrite(rowPin, HIGH);
+    }
 }
 
 #ifdef HOST_SIDE
 void getOtherSideState() {
-	while (true) {
-		if (!Serial1.available()) break;
+    while (true) {
+        if (!Serial1.available()) break;
 
-		byte readData = Serial1.read();
-		if (readData == -1) break;
+        byte readData = Serial1.read();
+        if (readData == -1) break;
 
-		// 通信方式について
-		// 0bABCDEFGH
-		// AB  ... 状態。00:無効 01:Press 10:Release 11:後続データなし
-		// CDE ... rowPinの番号（右手用の範囲内で。したがって0～5）
-		// FGH ... colPinの番号（右手用の範囲内で。したがって0～6）
+        // 通信方式について
+        // 0bABCDEFGH
+        // AB  ... 状態。00:無効 01:Press 10:Release 11:後続データなし
+        // CDE ... rowPinの番号（右手用の範囲内で。したがって0～5）
+        // FGH ... colPinの番号（右手用の範囲内で。したがって0～6）
 
-		// bool eof     = (bool) ((readData & 0b10000000) == 0b10000000);
-		// bool isPress = (bool) ((readData & 0b01000000) == 0b00000000);
-		int state    = (int)  ((readData & 0b11000000) >> 6);
-		int rowPin   = (int)  ((readData & 0b00111000) >> 3);
-		int colPin   = (int)  ( readData & 0b00000111 );
+        // bool eof     = (bool) ((readData & 0b10000000) == 0b10000000);
+        // bool isPress = (bool) ((readData & 0b01000000) == 0b00000000);
+        int state    = (int)  ((readData & 0b11000000) >> 6);
+        int rowPin   = (int)  ((readData & 0b00111000) >> 3);
+        int colPin   = (int)  ( readData & 0b00000111 );
 
-		bool eof = (state == 0b11) || (state == 0b00);
-		bool isPress = state == 0b01;
-		if (rowPin >= ROW_NUM) rowPin = ROW_NUM - 1;
-		if (colPin >= COL_NUM) colPin = COL_NUM - 1;
+        bool eof = (state == 0b11) || (state == 0b00);
+        bool isPress = state == 0b01;
+        if (rowPin >= ROW_NUM) rowPin = ROW_NUM - 1;
+        if (colPin >= COL_NUM) colPin = COL_NUM - 1;
 
-		if (eof) { break; }
+        if (eof) { break; }
 
-		// Serial.print("Receive: ");
-		// Serial.print(readData, BIN);
-		// Serial.print(" r=");
-		// Serial.print(rowPin);
-		// Serial.print(" c=");
-		// Serial.print(colPin);
-		// Serial.print("  ->  ");
+        // Serial.print("Receive: ");
+        // Serial.print(readData, BIN);
+        // Serial.print(" r=");
+        // Serial.print(rowPin);
+        // Serial.print(" c=");
+        // Serial.print(colPin);
+        // Serial.print("  ->  ");
 
-		// printKeyEvent(rowPin, colPin, isPress, 0);
-		// ホスト：左手、サブ：右手
-		currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
-	}
+        // printKeyEvent(rowPin, colPin, isPress, 0);
+        // ホスト：左手、サブ：右手
+        currentState[rowPin][colPin + COL_NUM] = isPress ? LOW : HIGH;
+    }
 }
 void applyKeyState() {
-	// Raise Layer、Lower Layer が押されているかを取得
-	for (i = 0; i < ROW_NUM; i++) {
-		for (j = 0; j < COL_NUM_2; j++)  {
-			if (currentState[i][j] != beforeState[i][j]) {
-				if (keyMap[i][j] == KC_RISE) {
-					raiseLayerKey = currentState[i][j] == LOW;
-					beforeState[i][j] = currentState[i][j];
-					// Serial.println(raiseLayerKey);
-				}
-				if (keyMap[i][j] == KC_LOWR) {
-					lowerLayerKey = currentState[i][j] == LOW;
-					beforeState[i][j] = currentState[i][j];
-					// Serial.println(lowerLayerKey);
-				}
-			}
-		}
-	}
-	int layer = 0; // -1: Lower  0: Base  1: Raise
-	if (raiseLayerKey) layer++;
-	if (lowerLayerKey) layer--;
+    // Raise Layer、Lower Layer が押されているかを取得
+    for (i = 0; i < ROW_NUM; i++) {
+        for (j = 0; j < COL_NUM_2; j++)  {
+            if (currentState[i][j] != beforeState[i][j]) {
+                if (keyMap[i][j] == KC_RISE) {
+                    raiseLayerKey = currentState[i][j] == LOW;
+                    beforeState[i][j] = currentState[i][j];
+                    // Serial.println(raiseLayerKey);
+                }
+                if (keyMap[i][j] == KC_LOWR) {
+                    lowerLayerKey = currentState[i][j] == LOW;
+                    beforeState[i][j] = currentState[i][j];
+                    // Serial.println(lowerLayerKey);
+                }
+            }
+        }
+    }
+    int layer = 0; // -1: Lower  0: Base  1: Raise
+    if (raiseLayerKey) layer++;
+    if (lowerLayerKey) layer--;
 
-	// キーを送る
-	int keyCode;
-	for (i = 0; i < ROW_NUM; i++) {
-		for (j = 0; j < COL_NUM_2; j++)  {
-			// チャタリング防止のための待ち処理
-			if (pressedKeyCount[i][j] > 0) {
-				if (pressedKeyCount[i][j]++ < IGNORE_FRAMES) {
-					continue;
-				} else {
-					pressedKeyCount[i][j] = 0;
-				}
-			}
-			// 押下状態の変化を検出してキーを送る
-			if (currentState[i][j] != beforeState[i][j]) {
-				if (currentState[i][j] == LOW) {
-					if (layer == 0) keyCode = keyMap[i][j];
-					else if (layer > 0) keyCode = keyMapRaise[i][j];
-					else if (layer < 0) keyCode = keyMapLower[i][j];
-					// keyCode = currentMap[i][j];
-					if (keyCode == KC_NULL) keyCode = keyMap[i][j];
-					if (keyCode == KC_RISE) continue;
-					if (keyCode == KC_LOWR) continue;
+    // キーを送る
+    int keyCode;
+    for (i = 0; i < ROW_NUM; i++) {
+        for (j = 0; j < COL_NUM_2; j++)  {
+            // チャタリング防止のための待ち処理
+            if (pressedKeyCount[i][j] > 0) {
+                if (pressedKeyCount[i][j]++ < IGNORE_FRAMES) {
+                    continue;
+                } else {
+                    pressedKeyCount[i][j] = 0;
+                }
+            }
+            // 押下状態の変化を検出してキーを送る
+            if (currentState[i][j] != beforeState[i][j]) {
+                if (currentState[i][j] == LOW) {
+                    if (layer == 0) keyCode = keyMap[i][j];
+                    else if (layer > 0) keyCode = keyMapRaise[i][j];
+                    else if (layer < 0) keyCode = keyMapLower[i][j];
+                    // keyCode = currentMap[i][j];
+                    if (keyCode == KC_NULL) keyCode = keyMap[i][j];
+                    if (keyCode == KC_RISE) continue;
+                    if (keyCode == KC_LOWR) continue;
 
-					pressedKeyCode[i][j] = keyCode;
-					pressedKeyCount[i][j] = 1;
-					Keyboard.press((char) keyCode);
-					// printKeyEvent(i, j, true, layer);
-					// printPressedKey(keyCode);
-				} else {
-					keyCode = pressedKeyCode[i][j];
-					pressedKeyCode[i][j] = KC_NULL;
-					Keyboard.release((char) keyCode);
-					// printKeyEvent(i, j, false, layer);
-					// printPressedKey(keyCode);
-				}
-			}
-			beforeState[i][j] = currentState[i][j];
-		}
-	}
+                    pressedKeyCode[i][j] = keyCode;
+                    pressedKeyCount[i][j] = 1;
+
+                    if (keyCode == KC_CTSP)  {
+                        // 特殊キー Ctrl+Space の押下
+                        Keyboard.press((char) KC_LCTL);
+                        Keyboard.press((char) KC_SPC);
+                    } else {
+                        // 通常キーの押下
+                        Keyboard.press((char) keyCode);
+                    }
+                    // printKeyEvent(i, j, true, layer);
+                    // printPressedKey(keyCode);
+                } else {
+                    keyCode = pressedKeyCode[i][j];
+                    pressedKeyCode[i][j] = KC_NULL;
+
+                    if (keyCode == KC_CTSP)  {
+                        // 特殊キー Ctrl+Space のリリース
+                        Keyboard.release((char) KC_SPC);
+                        Keyboard.release((char) KC_LCTL);
+                    } else {
+                        // 通常キーのリリース
+                        Keyboard.release((char) keyCode);
+                    }
+                    // printKeyEvent(i, j, false, layer);
+                    // printPressedKey(keyCode);
+                }
+            }
+            beforeState[i][j] = currentState[i][j];
+        }
+    }
 }
 #endif
 
 #ifndef HOST_SIDE
 void sendThisSideState() {
-	if (!Serial1.availableForWrite()) return;
+    if (!Serial1.availableForWrite()) return;
 
-	bool sentFlag = false;
-	int state;
-	byte sendData = 0b00000000;
+    bool sentFlag = false;
+    int state;
+    byte sendData = 0b00000000;
 
-	for (i = 0; i < ROW_NUM; i++) {
-		for (j = 0; j < COL_NUM; j++) {
-			if (currentState[i][j] != beforeState[i][j]) {
-				if (currentState[i][j] == LOW) {
-					// printKeyEvent(i, j, true, 0);
-					state = 0b01000000;
-				} else {
-					// printKeyEvent(i, j, false, 0);
-					state = 0b10000000;
-				}
-				sendData = (byte) (state | i << 3 | j);
-				sentFlag = true;
-				// Serial.print("Send: ");
-				// Serial.println(sendData);
-				Serial1.write(sendData);
-			}
-			beforeState[i][j] = currentState[i][j];
-		}
-	}
-	if (sentFlag) Serial1.write(0b11111111);	// 後続データなしを送信
+    for (i = 0; i < ROW_NUM; i++) {
+        for (j = 0; j < COL_NUM; j++) {
+            if (currentState[i][j] != beforeState[i][j]) {
+                if (currentState[i][j] == LOW) {
+                    // printKeyEvent(i, j, true, 0);
+                    state = 0b01000000;
+                } else {
+                    // printKeyEvent(i, j, false, 0);
+                    state = 0b10000000;
+                }
+                sendData = (byte) (state | i << 3 | j);
+                sentFlag = true;
+                // Serial.print("Send: ");
+                // Serial.println(sendData);
+                Serial1.write(sendData);
+            }
+            beforeState[i][j] = currentState[i][j];
+        }
+    }
+    if (sentFlag) Serial1.write(0b11111111); // 後続データなしを送信
 }
 #endif
 
 void printKeyEvent(int row, int col, bool isPress, int layer) {
-	if (isPress) {
-		Serial.print("PRESS   (");
-	} else {
-		Serial.print("RELEASE (");
-	}
-	Serial.print(row);
-	Serial.print(", ");
-	Serial.print(col);
-	Serial.print(", ");
-	Serial.print(layer);
-	Serial.println(")");
+    if (isPress) {
+        Serial.print("PRESS   (");
+    } else {
+        Serial.print("RELEASE (");
+    }
+    Serial.print(row);
+    Serial.print(", ");
+    Serial.print(col);
+    Serial.print(", ");
+    Serial.print(layer);
+    Serial.println(")");
 }
 
 void printPressedKey(byte keyCode) {
-	Serial.print("    KEYCODE: ");
-	Serial.println(keyCode);
+    Serial.print("    KEYCODE: ");
+    Serial.println(keyCode);
 }
 

@@ -164,6 +164,7 @@ void applyKeyState() {
                     if (keyCode == KC_CTSP)  {
                         // 特殊キー Ctrl+Space の押下
                         Keyboard.press((char) KC_LCTL);
+                        delay(8);
                         Keyboard.press((char) KC_SPC);
                     } else {
                         // 通常キーの押下
@@ -178,6 +179,7 @@ void applyKeyState() {
                     if (keyCode == KC_CTSP)  {
                         // 特殊キー Ctrl+Space のリリース
                         Keyboard.release((char) KC_SPC);
+                        delay(8);
                         Keyboard.release((char) KC_LCTL);
                     } else {
                         // 通常キーのリリース

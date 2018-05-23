@@ -38,6 +38,7 @@
 			<srckey key-code="KC_HOME" name="Home" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_PGUP" name="PgUp" @onclick="onClickSrcKey" class="halfm"></srckey>
 			<srckey key-code="KC_RISE" name="Raise" @onclick="onClickSrcKey"></srckey>
+      <srckey key-code="KC_CTSP" name="C_Sp" @onclick="onClickSrcKey"></srckey>
 		</div>
 		<div class="row">
 			<srckey key-code="KC_TAB " name="Tab" @onclick="onClickSrcKey"></srckey>
@@ -99,7 +100,7 @@
 			<srckey key-code="KC_RGUI" name="RWin" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_MENU" name="Menu" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RCTL" name="RCtrl" class="minim" @onclick="onClickSrcKey"></srckey>
-			<srckey key-code="KC_LEFT" name="↝" @onclick="onClickSrcKey"></srckey>
+			<srckey key-code="KC_LEFT" name="←" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_DOWN" name="↓" @onclick="onClickSrcKey"></srckey>
 			<srckey key-code="KC_RGHT" name="→" @onclick="onClickSrcKey"></srckey>
 		</div>

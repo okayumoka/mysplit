@@ -1,11 +1,22 @@
 <template>
   <div id="layouteditor">
-    <h1>{{title}}</h1>
+    <h1>Layout Editor</h1>
     <div class="lay-size">
-      Size: 
-      <input type="number" v-model="rowSize" @change="onChangeSize">
-      x
-      <input type="number" v-model="colSize" @change="onChangeSize">
+      <div class="control-area">
+        Size: 
+        <input type="number" v-model="rowSize" @change="onChangeSize">
+        x
+        <input type="number" v-model="colSize" @change="onChangeSize">
+      </div>
+      <div class="control-area">
+        <button @click="onClickRestore">Restore from File</button>
+        <input type="file" ref="fileselect" class="hidden" @change="onSelectFile">
+      </div>
+      <div class="control-area">
+        <button @click="onClickGenerate">Generate & Download</button>
+        <a class="hidden" target="_blank" ref="downloadlink" :href="downloadUrl" :download="downloadFilename">Download</a>
+        <textarea class="hidden" v-model="keymapIno" cols="30" rows="10"></textarea>
+      </div>
     </div>
     <div>
       <srckeys ref="srckeys"></srckeys>
@@ -25,29 +36,12 @@
         </div>
       </div>
     </div>
-
-    <button @click="onClickGenerate">Generate</button>
-    <a target="_blank" :href="downloadUrl" :download="downloadFilename">Download</a>
-    <div>
-      keymap.ino:<br>
-      <textarea v-model="keymapIno" cols="30" rows="10"></textarea>
-    </div>
-    <div>
-      Load layout from file:<br>
-      <input type="file" @change="onSelectFile">
-    </div>
   </div>
 </template>
 
 <script>
 
-// let layout = require('../layouts/default.5x6.json');
-// console.log(layout);
-
 function generateOutputIno(keyMapList) {
-  // let arrayToStr = (ary) => {
-  // 	return '\t{ ' + ary.map(r => r.join(', ')).join(' },\n\t{ ') + ' }';
-  // };
   let arrayToStr = (ary, index) => {
     return '    { ' + 
       ary.map(r => r.map(c => c.keyCodes[index]).join(', '))
@@ -101,7 +95,6 @@ module.exports = {
     let rowSize = 4;
     let colSize = 7;
     return {
-      title: 'Layout Editor',
       rowSize: rowSize,
       colSize: colSize,
       rowIndex: [...Array(rowSize).keys()],
@@ -136,6 +129,9 @@ module.exports = {
       // console.log(name + ' ' + index);
       this.currentLayerIndex = index;
     },
+    onClickRestore: function() {
+      this.$refs.fileselect.click();
+    },
     onClickGenerate: function() {
       let keys = this.getKeys();
 
@@ -150,6 +146,10 @@ module.exports = {
       let ino = generateOutputIno(keyInfoList);
       this.downloadAsFile(ino, 'keymap.ino', 'application/text');
       this.keymapIno = ino;
+      setTimeout(() => {
+        console.log(this.$refs.downloadlink);
+        this.$refs.downloadlink.click();
+      }, 500);
     },
     getKeys: function() {
       return this.$children.filter((child) => {
@@ -166,8 +166,6 @@ module.exports = {
       let file = target.files[0];
       let reader = new FileReader();
       reader.onload = (e) => {
-        // console.log(e);
-        // console.log(e.target.result);
         this.srcText = e.target.result;
         let srcJson = parseSrcText(this.srcText);
         this.applyToLayout(srcJson);
@@ -185,10 +183,6 @@ module.exports = {
         let col = key.col;
         let keyInfo = srcJson[row][col];
         key.setKeyInfo(keyInfo);
-        // let keyCodes = key.keyCodes;
-        // lower[row][col] = keyCodes[0] == null ? 'KC_NULL' : keyCodes[0];
-        // normal[row][col] = keyCodes[1] == null ? 'KC_NULL' : keyCodes[1];
-        // upper[row][col] = keyCodes[2] == null ? 'KC_NULL' : keyCodes[2];
       });
     },
   },
@@ -196,11 +190,31 @@ module.exports = {
 </script>
 
 <style scoped>
+#layouteditor {
+  width: 1000px;
+  overflow: auto;
+}
+.hidden {
+  display: none;
+}
+.control-area {
+  display: inline-block;
+  margin: 0 10px;
+}
 input[type=number] {
   padding: 5px 10px;
   border: solid 1px gray;
+  border-radius: 2px;
+  width: 25px;
+}
+button {
+  border: solid 1px gray;
   border-radius: 5px;
-  width: 50px;
+  font-size: 16px;
+  padding: 5px 10px;
+}
+button:hover {
+  cursor: pointer;
 }
 h1 {
   display: inline-block;

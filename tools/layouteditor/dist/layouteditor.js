@@ -835,8 +835,10 @@ module.exports = {
       }
     },
     onChangeLayer: function(name, index) {
-      // console.log(name + ' ' + index);
       this.currentLayerIndex = index;
+      this.getKeys().forEach((key) => {
+        key.layer = index;
+      });
     },
     onClickRestore: function() {
       this.$refs.fileselect.click();
@@ -856,7 +858,6 @@ module.exports = {
       this.downloadAsFile(ino, 'keymap.ino', 'application/text');
       this.keymapIno = ino;
       setTimeout(() => {
-        console.log(this.$refs.downloadlink);
         this.$refs.downloadlink.click();
       }, 500);
     },
@@ -902,6 +903,10 @@ module.exports = {
 /* 6 */
 /***/ (function(module, exports) {
 
+//
+//
+//
+//
 //
 //
 //
@@ -9911,7 +9916,7 @@ exports = module.exports = __webpack_require__(0)(false);
 
 
 // module
-exports.push([module.i, "\n.key[data-v-5dac5e96] {\n\tdisplay: inline-block;\n\tposition: relative;\n\twidth: 54px;\n\theight: 54px;\t\n\tmargin: 0;\n\tcursor: pointer;\n}\n.key div[data-v-5dac5e96] {\n\tdisplay: inline-block;\n\tposition: absolute;\n\ttop: 2px;\n\tright: 2px;\n\tbottom: 2px;\n\tleft: 2px;\n\tline-height: 16.5px;\n\tborder: solid 1px gray;\n\ttext-align: center;\n\toverflow: hidden;\n\tfont-size: 12px;\n\tfont-family: 'Consolas';\n\tbackground: white;\n}\n", ""]);
+exports.push([module.i, "\n.key[data-v-5dac5e96] {\n\tdisplay: inline-block;\n\tposition: relative;\n\twidth: 54px;\n\theight: 54px;\t\n\tmargin: 0;\n\tcursor: pointer;\n}\n.key div[data-v-5dac5e96] {\n\tdisplay: inline-block;\n\tposition: absolute;\n\ttop: 2px;\n\tright: 2px;\n\tbottom: 2px;\n\tleft: 2px;\n\tline-height: 16.5px;\n\tborder: solid 1px gray;\n\ttext-align: center;\n\toverflow: hidden;\n\tfont-size: 12px;\n\tfont-family: 'Consolas';\n\tbackground: white;\n}\n.active[data-v-5dac5e96] {\n  color: red;\n  font-weight: bold;\n}\n", ""]);
 
 // exports
 
@@ -9929,11 +9934,20 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "key", on: { click: _vm.onClick } }, [
     _c("div", [
-      _c("span", [_vm._v(_vm._s(_vm.names[2])), _c("br")]),
+      _c("span", { class: { active: _vm.layer == 2 } }, [
+        _vm._v(_vm._s(_vm.names[2])),
+        _c("br")
+      ]),
       _vm._v(" "),
-      _c("span", [_vm._v(_vm._s(_vm.names[1])), _c("br")]),
+      _c("span", { class: { active: _vm.layer == 1 } }, [
+        _vm._v(_vm._s(_vm.names[1])),
+        _c("br")
+      ]),
       _vm._v(" "),
-      _c("span", [_vm._v(_vm._s(_vm.names[0])), _c("br")])
+      _c("span", { class: { active: _vm.layer == 0 } }, [
+        _vm._v(_vm._s(_vm.names[0])),
+        _c("br")
+      ])
     ])
   ])
 }

@@ -2,9 +2,9 @@
 <template>
 	<div class="key" @click="onClick">
 		<div>
-			<span>{{names[2]}}<br></span>
-			<span>{{names[1]}}<br></span>
-			<span>{{names[0]}}<br></span>
+      <span :class="{active: layer==2}">{{names[2]}}<br></span>
+			<span :class="{active: layer==1}">{{names[1]}}<br></span>
+			<span :class="{active: layer==0}">{{names[0]}}<br></span>
 		</div>
 	</div>
 </template>
@@ -32,6 +32,10 @@
 	font-size: 12px;
 	font-family: 'Consolas';
 	background: white;
+}
+.active {
+  color: red;
+  font-weight: bold;
 }
 </style>
 

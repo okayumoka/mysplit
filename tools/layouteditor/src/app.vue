@@ -126,8 +126,10 @@ module.exports = {
       }
     },
     onChangeLayer: function(name, index) {
-      // console.log(name + ' ' + index);
       this.currentLayerIndex = index;
+      this.getKeys().forEach((key) => {
+        key.layer = index;
+      });
     },
     onClickRestore: function() {
       this.$refs.fileselect.click();
@@ -147,7 +149,6 @@ module.exports = {
       this.downloadAsFile(ino, 'keymap.ino', 'application/text');
       this.keymapIno = ino;
       setTimeout(() => {
-        console.log(this.$refs.downloadlink);
         this.$refs.downloadlink.click();
       }, 500);
     },

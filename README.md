@@ -7,6 +7,8 @@
 この自作キーボードは、基盤（PCB）を使わず、空中配線するようになっています。
 半田付けの難易度は高くないと思います。
 
+![完成品の一例](https://raw.githubusercontent.com/okayumoka/mysplit/master/picture/IMG_20180529_204956.jpg)
+
 # 特徴など
 
 自作キーボードとしてはあまり特徴の無い、 左右分割型の格子配列です。
@@ -118,6 +120,10 @@ Arduino Microは左右に一つずつ、合計2台必要です。
 
 回路図は、スイッチを筐体にはめ込んで裏返した状態となっています。
 表から見た状態ではないので注意してください。
+
+![回路図](https://raw.githubusercontent.com/okayumoka/mysplit/master/picture/circuit_diagram.png)
+
+![配線した状態](https://raw.githubusercontent.com/okayumoka/mysplit/master/picture/IMG_20180529_205459.jpg)
 
 また、ProMicroの互換品はMicro USBジャックが折れやすいものが多いですので、
 セメダイン スーパーXなどで固定してしまうのがおすすめです。

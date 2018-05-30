@@ -121,12 +121,12 @@ Arduino Microは左右に一つずつ、合計2台必要です。
 回路図は、スイッチを筐体にはめ込んで裏返した状態となっています。
 表から見た状態ではないので注意してください。
 
+また、ProMicroの互換品はMicro USBジャックが折れやすいものが多いですので、
+セメダイン スーパーXなどで固定してしまうのがおすすめです。
+
 ![回路図](https://raw.githubusercontent.com/okayumoka/mysplit/master/picture/circuit_diagram.png)
 
 ![配線した状態](https://raw.githubusercontent.com/okayumoka/mysplit/master/picture/IMG_20180529_205459.jpg)
-
-また、ProMicroの互換品はMicro USBジャックが折れやすいものが多いですので、
-セメダイン スーパーXなどで固定してしまうのがおすすめです。
 
 ## 5.ファームウェア書き込み
 

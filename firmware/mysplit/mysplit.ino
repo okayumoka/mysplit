@@ -12,6 +12,8 @@ bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
 bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態
 int pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
 unsigned long pressedKeyTime[ROW_NUM][COL_NUM_2]; // 押下してからの経過時間（マイクロ秒）
+bool raiseLayerKey = 0;
+bool lowerLayerKey = 0;
 
 #define IGNORE_TIME_MICROS 500 // 押下状態の変化を無視する時間（マイクロ秒）
 
@@ -109,8 +111,6 @@ void getOtherSideState() {
 }
 void applyKeyState() {
     // Raise Layer、Lower Layer が押されているかを取得
-    bool raiseLayerKey = 0;
-    bool lowerLayerKey = 0;
     for (int i = 0; i < ROW_NUM; i++) {
         for (int j = 0; j < COL_NUM_2; j++)  {
             if (currentState[i][j] != beforeState[i][j]) {

@@ -11,33 +11,27 @@ const int colPins[COL_NUM] = { 6, 7, 8, 9, 10, 14, 15 }; // INPUT_PULLUPのピ�
 bool currentState[ROW_NUM][COL_NUM_2]; // 現在のループでの押下状態
 bool beforeState[ROW_NUM][COL_NUM_2];  // 前のループでの押下状態
 int pressedKeyCode[ROW_NUM][COL_NUM_2]; // 押下したキー
-int pressedKeyCount[ROW_NUM][COL_NUM_2]; // 押下してからのカウント
+unsigned long pressedKeyTime[ROW_NUM][COL_NUM_2]; // 押下してからの経過時間（マイクロ秒）
 
-int i;
-int j;
-bool raiseLayerKey = 0;
-bool lowerLayerKey = 0;
-
-#define IGNORE_FRAMES 140
-
+#define IGNORE_TIME_MICROS 500 // 押下状態の変化を無視する時間（マイクロ秒）
 
 void setup() {
-    for (i = 0; i < ROW_NUM; i++) {
+    for (int i = 0; i < ROW_NUM; i++) {
         int pin = rowPins[i];
         pinMode(pin, OUTPUT);
         digitalWrite(pin, HIGH);
     }
-    for (i = 0; i < COL_NUM; i++) {
+    for (int i = 0; i < COL_NUM; i++) {
         int pin = colPins[i];
         pinMode(pin, INPUT_PULLUP);
     }
 
-    for (i = 0; i < ROW_NUM; i++) {
-        for (j = 0; j < COL_NUM_2; j++) {
+    for (int i = 0; i < ROW_NUM; i++) {
+        for (int j = 0; j < COL_NUM_2; j++) {
             currentState[i][j] = HIGH;
             beforeState[i][j] = HIGH;
             pressedKeyCode[i][j] = KC_NULL;
-            pressedKeyCount[i][j] = 0;
+            pressedKeyTime[i][j] = 0;
         }
     }
 
@@ -62,10 +56,10 @@ void loop() {
 #endif
 
 void getThisSideState() {
-    for (i = 0; i < ROW_NUM; i++) {
+    for (int i = 0; i < ROW_NUM; i++) {
         int rowPin = rowPins[i];
         digitalWrite(rowPin, LOW);
-        for (j = 0; j < COL_NUM; j++)  {
+        for (int j = 0; j < COL_NUM; j++)  {
             int colPin = colPins[j];
             currentState[i][j] = digitalRead(colPin);
         }
@@ -115,18 +109,18 @@ void getOtherSideState() {
 }
 void applyKeyState() {
     // Raise Layer、Lower Layer が押されているかを取得
-    for (i = 0; i < ROW_NUM; i++) {
-        for (j = 0; j < COL_NUM_2; j++)  {
+    bool raiseLayerKey = 0;
+    bool lowerLayerKey = 0;
+    for (int i = 0; i < ROW_NUM; i++) {
+        for (int j = 0; j < COL_NUM_2; j++)  {
             if (currentState[i][j] != beforeState[i][j]) {
                 if (keyMap[i][j] == KC_RISE) {
                     raiseLayerKey = currentState[i][j] == LOW;
                     beforeState[i][j] = currentState[i][j];
-                    // Serial.println(raiseLayerKey);
                 }
                 if (keyMap[i][j] == KC_LOWR) {
                     lowerLayerKey = currentState[i][j] == LOW;
                     beforeState[i][j] = currentState[i][j];
-                    // Serial.println(lowerLayerKey);
                 }
             }
         }
@@ -137,14 +131,15 @@ void applyKeyState() {
 
     // キーを送る
     int keyCode;
-    for (i = 0; i < ROW_NUM; i++) {
-        for (j = 0; j < COL_NUM_2; j++)  {
+    for (int i = 0; i < ROW_NUM; i++) {
+        for (int j = 0; j < COL_NUM_2; j++)  {
             // チャタリング防止のための待ち処理
-            if (pressedKeyCount[i][j] > 0) {
-                if (pressedKeyCount[i][j]++ < IGNORE_FRAMES) {
+            if (pressedKeyTime[i][j] > 0) {
+                unsigned long elapsed = micros() - pressedKeyTime[i][j];
+                if (elapsed < IGNORE_TIME_MICROS) {
                     continue;
                 } else {
-                    pressedKeyCount[i][j] = 0;
+                    pressedKeyTime[i][j] = 0;
                 }
             }
             // 押下状態の変化を検出してキーを送る
@@ -159,12 +154,12 @@ void applyKeyState() {
                     if (keyCode == KC_LOWR) continue;
 
                     pressedKeyCode[i][j] = keyCode;
-                    pressedKeyCount[i][j] = 1;
+                    pressedKeyTime[i][j] = micros();
 
                     if (keyCode == KC_CTSP)  {
                         // 特殊キー Ctrl+Space の押下
                         Keyboard.press((char) KC_LCTL);
-                        delay(8);
+                        delay(1);
                         Keyboard.press((char) KC_SPC);
                     } else {
                         // 通常キーの押下
@@ -179,7 +174,7 @@ void applyKeyState() {
                     if (keyCode == KC_CTSP)  {
                         // 特殊キー Ctrl+Space のリリース
                         Keyboard.release((char) KC_SPC);
-                        delay(8);
+                        delay(1);
                         Keyboard.release((char) KC_LCTL);
                     } else {
                         // 通常キーのリリース
@@ -203,8 +198,8 @@ void sendThisSideState() {
     int state;
     byte sendData = 0b00000000;
 
-    for (i = 0; i < ROW_NUM; i++) {
-        for (j = 0; j < COL_NUM; j++) {
+    for (int i = 0; i < ROW_NUM; i++) {
+        for (int j = 0; j < COL_NUM; j++) {
             if (currentState[i][j] != beforeState[i][j]) {
                 if (currentState[i][j] == LOW) {
                     // printKeyEvent(i, j, true, 0);

@@ -15,7 +15,7 @@ unsigned long pressedKeyTime[ROW_NUM][COL_NUM_2]; // 押下してからの経過
 bool raiseLayerKey = 0;
 bool lowerLayerKey = 0;
 
-#define IGNORE_TIME_MICROS 500 // 押下状態の変化を無視する時間（マイクロ秒）
+#define IGNORE_TIME_MICROS 16000 // 押下状態の変化を無視する時間（マイクロ秒）
 
 void setup() {
     for (int i = 0; i < ROW_NUM; i++) {
@@ -159,8 +159,11 @@ void applyKeyState() {
                     if (keyCode == KC_CTSP)  {
                         // 特殊キー Ctrl+Space の押下
                         Keyboard.press((char) KC_LCTL);
-                        delay(1);
                         Keyboard.press((char) KC_SPC);
+                        // 特殊キー Ctrl+Space の即時リリース
+                        Keyboard.release((char) KC_SPC);
+                        Keyboard.release((char) KC_LCTL);
+                        delay(1);
                     } else {
                         // 通常キーの押下
                         Keyboard.press((char) keyCode);
@@ -173,9 +176,7 @@ void applyKeyState() {
 
                     if (keyCode == KC_CTSP)  {
                         // 特殊キー Ctrl+Space のリリース
-                        Keyboard.release((char) KC_SPC);
-                        delay(1);
-                        Keyboard.release((char) KC_LCTL);
+                        // 即時リリース扱いでリリースされているので処理不要
                     } else {
                         // 通常キーのリリース
                         Keyboard.release((char) keyCode);

@@ -1,7 +1,5 @@
 // MySplit
 
-#define HOST_SIDE
-
 #include "Keyboard.h"
 #include "keymap.h"
 
@@ -39,23 +37,15 @@ void setup() {
 
     Serial.begin(9600);
     Serial1.begin(9600);
-#ifdef HOST_SIDE
     Keyboard.begin();
-#endif
 }
 
-#ifdef HOST_SIDE
-void loop() {
-    getThisSideState();
-    getOtherSideState();
-    applyKeyState();
-}
-#else
 void loop() {
     getThisSideState();
     sendThisSideState();
+    getOtherSideState();
+    applyKeyState();
 }
-#endif
 
 void getThisSideState() {
     for (int i = 0; i < ROW_NUM; i++) {
@@ -69,7 +59,6 @@ void getThisSideState() {
     }
 }
 
-#ifdef HOST_SIDE
 void getOtherSideState() {
     while (true) {
         if (!Serial1.available()) break;
@@ -189,9 +178,7 @@ void applyKeyState() {
         }
     }
 }
-#endif
 
-#ifndef HOST_SIDE
 void sendThisSideState() {
     if (!Serial1.availableForWrite()) return;
 
@@ -215,12 +202,11 @@ void sendThisSideState() {
                 // Serial.println(sendData);
                 Serial1.write(sendData);
             }
-            beforeState[i][j] = currentState[i][j];
+            //beforeState[i][j] = currentState[i][j];
         }
     }
     if (sentFlag) Serial1.write(0b11111111); // 後続データなしを送信
 }
-#endif
 
 void printKeyEvent(int row, int col, bool isPress, int layer) {
     if (isPress) {
